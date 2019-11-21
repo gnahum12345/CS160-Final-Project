@@ -61,7 +61,7 @@ public class HomeActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(@NonNull GridHolder gridHolder, int i) {
             gridHolder.imageView.setImageBitmap(bitmaps[i]);
-            gridHolder.textView.setText("Caption: " + i);
+            gridHolder.textView.setText("User " + i + ": Hello Please help me make a caption on this pic, I want to post it on my Ins");
         }
 
         @Override
