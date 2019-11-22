@@ -145,6 +145,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         btn_friends.setTextSize(25);
         btn_explore.setTextColor(getApplication().getColor(R.color.colorLightGrey));
         btn_explore.setTextSize(15);
+        viewFlipper.setInAnimation(AnimationUtils.loadAnimation(context, R.anim.slide_in_left));
+        viewFlipper.setOutAnimation(AnimationUtils.loadAnimation(context, R.anim.slide_out_right));
     }
 
     private void selectExplore() {
@@ -153,6 +155,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         btn_explore.setTextSize(25);
         btn_friends.setTextColor(getApplication().getColor(R.color.colorLightGrey));
         btn_friends.setTextSize(15);
+        viewFlipper.setInAnimation(AnimationUtils.loadAnimation(context, R.anim.slide_in_right));
+        viewFlipper.setOutAnimation(AnimationUtils.loadAnimation(context, R.anim.slide_out_left));
     }
 
     private class MyRecyclerAdapter extends RecyclerView.Adapter<GridHolder>{
