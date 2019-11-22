@@ -95,7 +95,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View view) {
-        Log.d("mayTag", "Click!!!!");
         if (view.getId() == R.id.btn_explore) {
             if (viewFlipper.getDisplayedChild() != 0) {
                 selectExplore();
@@ -109,7 +108,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public boolean onTouchEvent(MotionEvent touchevent) {
-        Log.d("myTag", "Touch!!!!!!!!");
         switch (touchevent.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 initialX = touchevent.getX();
@@ -121,16 +119,10 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                     if (viewFlipper.getDisplayedChild() == 1)
                         break;
 
-//                    viewFlipper.setInAnimation(AnimationUtils.loadAnimation(context, R.anim.in_from_left));
-//                    viewFlipper.setOutAnimation(AnimationUtils.loadAnimation(context, R.anim.out_from_left));
-
                     selectFriend();
                 } else {
                     if (viewFlipper.getDisplayedChild() == 0)
                         break;
-
-//                    viewFlipper.setInAnimation(AnimationUtils.loadAnimation(context, R.anim.in_from_right));
-//                    viewFlipper.setOutAnimation(AnimationUtils.loadAnimation(context, R.anim.out_from_right));
 
                     selectExplore();
                 }
