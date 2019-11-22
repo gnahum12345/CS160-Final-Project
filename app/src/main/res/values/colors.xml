@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorPrimary">#27A2F8</color>
+    <color name="colorPrimaryDark">#9903A9F4</color>
     <color name="colorAccent">#FF4081</color>
-    <color name="colorLightGrey">#a7a8a8</color>
+    <color name="colorLightGrey">#8F595A5A</color>
+    <color name="colorTopHomeBar">#36595A5A</color>
     <color name="cardview_background">#f7f7f7</color>
 </resources>
