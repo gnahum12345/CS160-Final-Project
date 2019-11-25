@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Social A</string>
+    <string name="caption">Write a caption</string>
+    <string name="purpose">Purpose of this post</string>
+    <string name="post">Post</string>
+    <string name="new_post">New Post</string>
+    <string name="user_name">User Name</string>
 </resources>
