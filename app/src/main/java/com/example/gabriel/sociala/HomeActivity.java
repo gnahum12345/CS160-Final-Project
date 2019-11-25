@@ -1,22 +1,29 @@
 package com.example.gabriel.sociala;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 public class HomeActivity extends AppCompatActivity implements View.OnClickListener{
@@ -29,12 +36,39 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     private Context context;
     private float initialX;
 
+
+    private static final int IMAGE_PICK_CODE = 1000;
+    private static final int PERMISSION_CODE = 1001;
+
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_home);
-
         context = this;
+
+        BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
+
+        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.nav_home:
+                        Toast.makeText(context, "home", Toast.LENGTH_SHORT).show();
+                        break;
+                    case R.id.nav_add:
+                        Toast.makeText(context, "post", Toast.LENGTH_SHORT).show();
+                        postPhoto();
+                        break;
+                    case R.id.nav_profile:
+                        Toast.makeText(context, "profile", Toast.LENGTH_SHORT).show();
+                        break;
+                }
+                return true;
+            }
+        });
+
+
 
         viewFlipper = findViewById(R.id.view_flipper);
         rv_friends = (RecyclerView)findViewById(R.id.rvFriends);
@@ -189,4 +223,60 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             textView = itemView.findViewById(R.id.tvCaption);
         }
     }
+
+
+
+
+
+    private void postPhoto() {
+
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+            if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
+                    == PackageManager.PERMISSION_DENIED){
+                //permission not granted, request it.
+                String[] permissions = {Manifest.permission.READ_EXTERNAL_STORAGE};
+                //show popup for runtime permission
+                requestPermissions(permissions, PERMISSION_CODE);
+            }
+            else {
+                //permission already granted
+                pickImageFromGallery();
+            }
+        }
+        else {
+            //system os is less then marshmallow
+            pickImageFromGallery();
+        }
+
+    }
+
+
+    private void pickImageFromGallery() {
+        //intent to pick image
+        Intent intent = new Intent(Intent.ACTION_PICK);
+        intent.setType("image/*");
+        startActivityForResult(intent, IMAGE_PICK_CODE);
+    }
+
+    //handle result of picked image
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK && requestCode == IMAGE_PICK_CODE){
+            //set image to image view
+            //selectedImageView = findViewById(R.id.image_view);
+            //selectedImageView.setImageURI(data.getData());
+
+
+            Uri selectedImage = data.getData();
+
+            Intent intent = new Intent(this, PostPhotoActivity.class);
+            intent.putExtra("imagePath", selectedImage.toString());
+            startActivity(intent);
+
+        }
+    }
+
+
+
 }
