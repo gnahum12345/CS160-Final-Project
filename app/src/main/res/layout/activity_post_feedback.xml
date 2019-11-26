@@ -112,12 +112,8 @@
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:background="@drawable/backbutton"
-        app:layout_constraintBottom_toTopOf="@+id/image_view_photo"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.041"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.141" />
+        tools:layout_editor_absoluteX="16dp"
+        tools:layout_editor_absoluteY="16dp" />
 
 
 </android.support.constraint.ConstraintLayout>
