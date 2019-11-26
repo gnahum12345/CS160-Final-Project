@@ -12,8 +12,10 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -69,9 +71,19 @@ public class PostPhotoActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 File f = new File(filePath);
+                String caption = etCaption.getText().toString();
+                String purpose = etPurpose.getText().toString();
                 if (!f.exists()) {
                     Snackbar.make(view, "oh oh this isn't right" + f.getAbsolutePath() + " " + f.exists(),Snackbar.LENGTH_LONG).show();
                     return;
+                }
+                if (purpose.isEmpty()) {
+                    Snackbar.make(view, "Please fill out the purpose of posting", Snackbar.LENGTH_INDEFINITE).setAction("Ok", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            finish();
+                        }
+                    }).show();
                 }
                 ArrayList<File> files = new ArrayList<>();
                 files.add(f);
@@ -79,8 +91,14 @@ public class PostPhotoActivity extends AppCompatActivity {
                 users.add("4sVi0zisCr");
                 users.add("AMWRaP6MhM");
                 users.add("izGnOFiIGK");
-                PostManager.getInstance().createPost("My test caption", "to get a grade", files, users);
-                startActivity(new Intent(PostPhotoActivity.this, HomeActivity.class));
+                PostManager.getInstance().createPost(caption, purpose, files, users, new SaveCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        startActivity(new Intent(PostPhotoActivity.this, HomeActivity.class));
+                        finish();
+                    }
+                });
+
             }
         });
     }

@@ -67,8 +67,18 @@ public class PostManager {
             }
         });
     }
-
     public void createPost(String caption, String purpose, ArrayList<File> files, ArrayList<String> users) {
+        createPost(caption, purpose, files, users, new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e != null) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    public void createPost(String caption, String purpose, ArrayList<File> files, ArrayList<String> users, SaveCallback callback) {
         Post p = new Post();
         p.setCaption(caption);
         ArrayList<String> photos = new ArrayList<>();
@@ -95,15 +105,7 @@ public class PostManager {
         }
         p.setACL(acl);
         p.setCreator(ParseUser.getCurrentUser());
-        p.saveInBackground(new SaveCallback() {
-            @Override
-            public void done(ParseException e) {
-                if (e != null) {
-                    e.printStackTrace();
-                }
-
-            }
-        });
+        p.saveInBackground(callback);
     }
 
     public static class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
