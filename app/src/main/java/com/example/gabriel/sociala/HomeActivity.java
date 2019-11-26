@@ -266,12 +266,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
-
-
-
     private void postPhoto() {
-
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
             if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
                     == PackageManager.PERMISSION_DENIED){
@@ -301,14 +296,11 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         startActivityForResult(intent, IMAGE_PICK_CODE);
     }
 
+
     //handle result of picked image
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == RESULT_OK && requestCode == IMAGE_PICK_CODE) {
-            //set image to image view
-            //selectedImageView = findViewById(R.id.image_view);
-            //selectedImageView.setImageURI(data.getData());
-
+        if (resultCode == RESULT_OK && requestCode == IMAGE_PICK_CODE){
 
             Uri selectedImage = data.getData();
             final String[] columns = { MediaStore.MediaColumns.DATA };
@@ -326,7 +318,5 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         super.onActivityResult(requestCode, resultCode, data);
 
     }
-
-
 
 }

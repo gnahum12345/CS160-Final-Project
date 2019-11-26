@@ -7,7 +7,7 @@
 
 
     <ImageView
-        android:id="@+id/image_view"
+        android:id="@+id/image_view_photo"
         android:layout_width="match_parent"
         android:layout_height="280dp"
         android:scaleType="centerCrop"
@@ -19,7 +19,7 @@
         app:layout_constraintVertical_bias="0.317" />
 
     <EditText
-        android:id="@+id/etCaption"
+        android:id="@+id/editText_caption"
         android:layout_width="330dp"
         android:layout_height="50dp"
         android:layout_marginTop="32dp"
@@ -30,10 +30,10 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.975"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/image_view" />
+        app:layout_constraintTop_toBottomOf="@+id/image_view_photo" />
 
     <EditText
-        android:id="@+id/etPurpose"
+        android:id="@+id/editText_purpose"
         android:layout_width="330dp"
         android:layout_height="150dp"
         android:ems="10"
@@ -44,7 +44,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.493"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/image_view"
+        app:layout_constraintTop_toBottomOf="@+id/image_view_photo"
         app:layout_constraintVertical_bias="0.613" />
 
     <Button
@@ -67,7 +67,7 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="#51000000"
-        app:layout_constraintBottom_toTopOf="@+id/image_view"
+        app:layout_constraintBottom_toTopOf="@+id/image_view_photo"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -96,18 +96,22 @@
         android:src="@drawable/oski"
         app:civ_border_color="#FF000000"
         app:civ_border_width="2dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageButtonBack" />
+        app:layout_constraintBottom_toBottomOf="@+id/image_view_photo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.044"
+        app:layout_constraintStart_toStartOf="@+id/image_view_photo"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.193" />
 
     <TextView
-        android:id="@+id/tvName"
+        android:id="@+id/textView_username"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="sans-serif-medium"
         android:text="@string/user_name"
         android:textColor="#000000"
         android:textSize="18sp"
-        app:layout_constraintBottom_toTopOf="@+id/image_view"
+        app:layout_constraintBottom_toTopOf="@+id/image_view_photo"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.054"
         app:layout_constraintStart_toEndOf="@+id/profile_image"

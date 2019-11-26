@@ -28,21 +28,22 @@ public class PostPhotoActivity extends AppCompatActivity {
     ImageView selectedImageView;
     ImageButton backButton;
     Button postButton;
-    EditText etCaption;
-    EditText etPurpose;
-    CircleImageView ivProfile;
-    TextView tvName;
+  
+    TextView userName;
+    CircleImageView profilePic;
+    EditText caption;
+    EditText purpose;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post);
 
-        selectedImageView = findViewById(R.id.image_view);
-        etCaption = findViewById(R.id.etCaption);
-        etPurpose = findViewById(R.id.etPurpose);
-        ivProfile = findViewById(R.id.profile_image);
-        tvName = findViewById(R.id.tvName);
+        selectedImageView = findViewById(R.id.image_view_photo);
+        userName = findViewById(R.id.textView_username);
+        profilePic = findViewById(R.id.profile_image);
+        caption = findViewById(R.id.editText_caption);
+        purpose = findViewById(R.id.editText_purpose);
 
         ParseFile pf = ParseUser.getCurrentUser().getParseFile("profilePic");
         if (pf != null) {
@@ -62,6 +63,7 @@ public class PostPhotoActivity extends AppCompatActivity {
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                startActivity(new Intent(PostPhotoActivity.this, HomeActivity.class)); 
                 finish();
             }
         });
