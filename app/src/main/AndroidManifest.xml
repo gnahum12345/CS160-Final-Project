@@ -12,7 +12,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".editFeedbackActivity"></activity>
+        <activity android:name=".postFeedbackActivity"></activity>
+        <activity android:name=".editFeedbackActivity" />
         <activity android:name=".MainActivity">
 
             <!-- <intent-filter> -->
