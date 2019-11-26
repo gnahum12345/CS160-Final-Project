@@ -9,7 +9,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class postFeedbackActivity extends AppCompatActivity {
+public class PostFeedbackActivity extends AppCompatActivity {
 
     ImageView postImageView;
     Button backButton;
@@ -59,7 +59,7 @@ public class postFeedbackActivity extends AppCompatActivity {
     }
 
     public void backToEdit() {
-        Intent intent = new Intent(this, editFeedbackActivity.class);
+        Intent intent = new Intent(this, EditFeedbackActivity.class);
         startActivity(intent);
     }
 

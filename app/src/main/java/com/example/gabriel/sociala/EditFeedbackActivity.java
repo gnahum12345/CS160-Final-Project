@@ -8,7 +8,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class editFeedbackActivity extends AppCompatActivity {
+public class EditFeedbackActivity extends AppCompatActivity {
 
     ImageView postImageView;
     Button backButton, nextButton;
