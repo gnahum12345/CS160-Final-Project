@@ -1,14 +1,18 @@
 package com.example.gabriel.sociala;
 
 import android.Manifest;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
@@ -26,6 +30,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 
+import com.example.gabriel.sociala.models.Post;
+import com.parse.ParseUser;
+
+import java.util.ArrayList;
+import java.util.List;
+
+
 public class HomeActivity extends AppCompatActivity implements View.OnClickListener{
 
     private ViewFlipper viewFlipper;
@@ -35,17 +46,23 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     TextView btn_explore;
     private Context context;
     private float initialX;
-
+    private MyRecyclerAdapter myRecyclerAdapter;
+    ArrayList<Post> myPosts;
+    private static final String TAG = "HomeActivity";
 
     private static final int IMAGE_PICK_CODE = 1000;
     private static final int PERMISSION_CODE = 1001;
-
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_home);
         context = this;
+        viewFlipper = findViewById(R.id.view_flipper);
+        rv_friends = (RecyclerView)findViewById(R.id.rvFriends);
+        rv_explore = (RecyclerView)findViewById(R.id.rvExplore);
+        createHomeGrids(rv_friends);
+        createHomeGrids(rv_explore);
 
         BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
 
@@ -54,14 +71,15 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.nav_home:
-                        Toast.makeText(context, "home", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "Refreshing page", Toast.LENGTH_SHORT).show();
+                        PostManager.getInstance().getFriends(myRecyclerAdapter, myPosts);
                         break;
                     case R.id.nav_add:
                         Toast.makeText(context, "post", Toast.LENGTH_SHORT).show();
                         postPhoto();
                         break;
                     case R.id.nav_profile:
-                        Toast.makeText(context, "profile", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "profile: " + ParseUser.getCurrentUser().getUsername(), Toast.LENGTH_SHORT).show();
                         break;
                 }
                 return true;
@@ -69,12 +87,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         });
 
 
-
-        viewFlipper = findViewById(R.id.view_flipper);
-        rv_friends = (RecyclerView)findViewById(R.id.rvFriends);
-        rv_explore = (RecyclerView)findViewById(R.id.rvExplore);
-        createHomeGrids(rv_friends);
-        createHomeGrids(rv_explore);
 
         btn_explore = (TextView) findViewById(R.id.btn_explore);
         btn_friends = (TextView) findViewById(R.id.btn_friends);
@@ -84,15 +96,22 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         selectFriend();
     }
 
+
+
+
     private void createHomeGrids(RecyclerView v) {
         Bitmap[] bitmaps;
-        if (v == (RecyclerView)findViewById(R.id.rvFriends)) {
-            bitmaps = getFriendsBitmaps();
+        myPosts = new ArrayList<>();
+        myRecyclerAdapter = new MyRecyclerAdapter(myPosts);
 
+        if (v == (RecyclerView)findViewById(R.id.rvFriends)) {
+//            bitmaps = getFriendsBitmaps();
+            PostManager.getInstance().getFriends(myRecyclerAdapter, myPosts);
         } else {
-            bitmaps = getExploreBitmaps();
+//            bitmaps = getExploreBitmaps();
+            PostManager.getInstance().getInfluencers(myRecyclerAdapter, myPosts);
         }
-        MyRecyclerAdapter myRecyclerAdapter = new MyRecyclerAdapter(bitmaps);
+//        myRecyclerAdapter = new MyRecyclerAdapter(bitmaps);
         v.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
         v.setAdapter(myRecyclerAdapter);
     }
@@ -189,8 +208,14 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
         Bitmap[] bitmaps;
 
+        List<Post> posts;
+
         public MyRecyclerAdapter(Bitmap[] bitmaps) {
             this.bitmaps = bitmaps;
+        }
+
+        public MyRecyclerAdapter(ArrayList<Post> posts) {
+            this.posts = posts;
         }
 
         @NonNull
@@ -201,14 +226,30 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         @Override
-        public void onBindViewHolder(@NonNull GridHolder gridHolder, int i) {
-            gridHolder.imageView.setImageBitmap(bitmaps[i]);
-            gridHolder.textView.setText("User " + i + ": Hello Please help me make a caption on this pic, I want to post it on my Ins");
+        public void onBindViewHolder(@NonNull final GridHolder gridHolder, int i) {
+//            gridHolder.imageView.setImageBitmap(bitmaps[i]);
+            final Post p = posts.get(i);
+            gridHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(getApplicationContext(), p.getPhoto().getUrl(), Toast.LENGTH_SHORT).show();
+                    ClipboardManager clipboardManager = (ClipboardManager)getSystemService(CLIPBOARD_SERVICE);
+                    ClipData myClip = ClipData.newPlainText("text", p.getPhoto().getUrl());
+
+                    clipboardManager.setPrimaryClip(myClip);
+
+                }
+            });
+
+            PostManager.DownloadImageTask dimv = new PostManager.DownloadImageTask(gridHolder.imageView);
+            dimv.execute(p.getPhoto().getUrl());
+            Toast.makeText(getApplicationContext(), p.getPhoto().getUrl(), Toast.LENGTH_SHORT).show();
+            gridHolder.textView.setText(p.getCreator().getUsername() + ": " + p.getCaption());
         }
 
         @Override
         public int getItemCount() {
-            return bitmaps.length;
+            return posts.size();
         }
     }
 
@@ -254,7 +295,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     private void pickImageFromGallery() {
         //intent to pick image
-        Intent intent = new Intent(Intent.ACTION_PICK);
+
+        Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         intent.setType("image/*");
         startActivityForResult(intent, IMAGE_PICK_CODE);
     }
@@ -262,19 +304,27 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     //handle result of picked image
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == RESULT_OK && requestCode == IMAGE_PICK_CODE){
+        if (resultCode == RESULT_OK && requestCode == IMAGE_PICK_CODE) {
             //set image to image view
             //selectedImageView = findViewById(R.id.image_view);
             //selectedImageView.setImageURI(data.getData());
 
 
             Uri selectedImage = data.getData();
+            final String[] columns = { MediaStore.MediaColumns.DATA };
+            final Cursor cursor = this.getContentResolver().query(selectedImage, columns, null, null, null);
+            cursor.moveToFirst();
+            int columnIndex = cursor.getColumnIndex(MediaStore.MediaColumns.DATA);
+            String filePath = cursor.getString(columnIndex);
 
             Intent intent = new Intent(this, PostPhotoActivity.class);
             intent.putExtra("imagePath", selectedImage.toString());
+            intent.putExtra("filePath", filePath);
             startActivity(intent);
 
         }
+        super.onActivityResult(requestCode, resultCode, data);
+
     }
 
 

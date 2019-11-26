@@ -19,6 +19,14 @@ public class Photo extends ParseObject {
         return getParseFile(IMG_KEY);
     }
 
+    public void setPhoto(ParseFile f) {
+        put(IMG_KEY, f);
+    }
+
+    public void setName(String name) {
+        put(NAME_KEY, name);
+    }
+
     public String getName() {
         return getString(NAME_KEY);
     }

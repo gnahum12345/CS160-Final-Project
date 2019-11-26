@@ -24,15 +24,6 @@ public class Post extends ParseObject {
     private final static String IMAGE_ARR_KEY = "imageArr";
     private static final String CREATED_DATE_KEY = "createdAt";
 
-//    private String uuid;
-//    private User creator;
-//    private Date date;
-//    private Date schedulePost;
-//    private ArrayList<Feedback> feedbackList;
-//    private ArrayList<Bitmap> photos;
-//    private String caption;
-//    private String purpose;
-//    private ArrayList<User> grantedUsers;
 
 
     public boolean isInfluencer() {
@@ -67,10 +58,20 @@ public class Post extends ParseObject {
         return getDate(CREATED_DATE_KEY);
     }
 
-    public void setPhotos(ArrayList<Photo> photos) {
-        List<Photo> obj = getList(IMAGE_ARR_KEY);
+    public void setCreator(ParseUser user) {
+        put(CREATOR_KEY, user);
+    }
+    public void setPhotos(ArrayList<String> photos) {
+        List<String> obj = getList(IMAGE_ARR_KEY);
+        if (obj == null) {
+            obj = new ArrayList<>();
+        }
         obj.addAll(photos);
+
         put(IMAGE_ARR_KEY, obj);
+    }
+    public void setPhoto(ParseFile f) {
+        put(IMAGE_KEY, f);
     }
 
     public void setCaption(String caption) {
