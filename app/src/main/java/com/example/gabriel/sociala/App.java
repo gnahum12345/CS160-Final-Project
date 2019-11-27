@@ -40,7 +40,5 @@ public class App extends Application {
                 .applicationId("ucb-social-a") // should correspond to APP_ID env variable
                 .clientKey("ucb-social-a-final-project")
                 .server("https://ucb-social-a.herokuapp.com/parse/").build());
-
-        ParseUser.logOut();
     }
 }
