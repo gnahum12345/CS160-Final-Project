@@ -41,6 +41,6 @@ public class App extends Application {
                 .clientKey("ucb-social-a-final-project")
                 .server("https://ucb-social-a.herokuapp.com/parse/").build());
 
-//        ParseUser.logOut();
+        ParseUser.logOut();
     }
 }
