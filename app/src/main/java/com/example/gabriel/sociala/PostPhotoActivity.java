@@ -31,8 +31,8 @@ public class PostPhotoActivity extends AppCompatActivity {
   
     TextView userName;
     CircleImageView profilePic;
-    EditText caption;
-    EditText purpose;
+    EditText rv_caption;
+    EditText rv_purpose;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,15 +42,15 @@ public class PostPhotoActivity extends AppCompatActivity {
         selectedImageView = findViewById(R.id.image_view_photo);
         userName = findViewById(R.id.textView_username);
         profilePic = findViewById(R.id.profile_image);
-        caption = findViewById(R.id.editText_caption);
-        purpose = findViewById(R.id.editText_purpose);
+        rv_caption = findViewById(R.id.editText_caption);
+        rv_purpose = findViewById(R.id.editText_purpose);
 
         ParseFile pf = ParseUser.getCurrentUser().getParseFile("profilePic");
         if (pf != null) {
-            new PostManager.DownloadImageTask(ivProfile)
+            new PostManager.DownloadImageTask(profilePic)
                     .execute(pf.getUrl());
         }
-        tvName.setText(ParseUser.getCurrentUser().getUsername());
+        userName.setText(ParseUser.getCurrentUser().getUsername());
         Intent intent = getIntent();
         final String filePath = intent.getStringExtra("filePath");
 
@@ -73,8 +73,8 @@ public class PostPhotoActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 File f = new File(filePath);
-                String caption = etCaption.getText().toString();
-                String purpose = etPurpose.getText().toString();
+                String caption = rv_caption.getText().toString();
+                String purpose = rv_purpose.getText().toString();
                 if (!f.exists()) {
                     Snackbar.make(view, "oh oh this isn't right" + f.getAbsolutePath() + " " + f.exists(),Snackbar.LENGTH_LONG).show();
                     return;

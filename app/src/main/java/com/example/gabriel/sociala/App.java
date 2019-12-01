@@ -8,6 +8,7 @@ import com.example.gabriel.sociala.models.Post;
 import com.facebook.stetho.Stetho;
 import com.parse.Parse;
 import com.parse.ParseObject;
+import com.parse.ParseUser;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
