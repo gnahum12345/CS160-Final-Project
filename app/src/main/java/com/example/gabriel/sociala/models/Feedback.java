@@ -1,117 +1,104 @@
 package com.example.gabriel.sociala.models;
 
-import android.graphics.Bitmap;
-import android.os.Parcel;
-import android.os.Parcelable;
-import android.support.annotation.NonNull;
-
 import com.example.gabriel.sociala.exceptions.FeedbackException;
+import com.parse.ParseClassName;
+import com.parse.ParseFile;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
-import java.io.File;
-import java.util.ArrayList;
+import java.util.List;
 
-public class Feedback implements Comparable, Parcelable {
+@ParseClassName("Feedback")
+public class Feedback extends ParseObject {
 
-    private String uuid;
-    private User reviewer;
-    private String caption;
-    private String comment;
-    private Bitmap editedPhoto;
-    private ArrayList<String> tags;
-    private String song; // this would be a youtube link.
-    private Post post;
-    private String videoPath;
-    private ArrayList<User> likes;
-
-    /**
-     * Feedback constructor only needs Users and Post in order to
-     * get a uuid and create the object. Note that the same UUID will be created
-     * for the user until the Feedback is "posted".
-     * @param reviewer: user giving feedback
-     * @param p: the post that the reviewer is discussing.
-     * @Return Feedback object.
-     */
-    public Feedback(User reviewer, Post p) {
-        this.reviewer = reviewer;
-        this.post = p;
-        this.uuid = getUUID();
-        this.likes = new ArrayList<>();
-    }
+    private final static String UUID_KEY = "objectId";
+    private final static String DESCRIPTION_KEY  = "description";
+    private final static String CAPTION_KEY = "caption";
+    private final static String POST_KEY = "post";
+    private final static String REVIEWER_KEY = "reviewer";
+    private final static String EDITED_PHOTO_KEY = "editedPhoto";
+    private final static String LIKES_KEY = "likes";
+    private static final String CREATED_DATE_KEY = "createdAt";
+    private static final String VIDEO_PATH_KEY = "video";
 
 
-    /**
-     * getLikes will return all the users that liked the given feedback.
-     * @return the list of users to display to the user.
-     */
-    public ArrayList<User> getLikes() {
-        return likes;
+    public int getLikes() {
+        return getList(LIKES_KEY).size();
     }
 
     /**
      * Make a user like or dislike the feedback.
      * @param u
      */
-    public void toggleLikeFeedback(User u) {
-        if (!this.likes.contains(u)) {
-            this.likes.add(u);
+    public int toggleLikeFeedback(ParseUser u) {
+        List<ParseUser>  users = getList(LIKES_KEY);
+        if (users.contains(u)) {
+            users.remove(u);
         } else {
-            this.likes.remove(u);
+            users.add(u);
         }
         // update db.
+        put(LIKES_KEY, users);
+        return users.size();
     }
 
     /**
      * @param u: the user currently viewing the feedback.
      * @return true if user likes the feedback and false otherwise.
      */
-    public boolean likedFeedback(User u) {
-        return this.likes.contains(u);
+    public boolean likedFeedback(ParseUser u) {
+        return getList(LIKES_KEY).contains(u);
     }
 
     public String getCaption() {
-        return caption;
+        return getString(CAPTION_KEY);
     }
 
     public String getComment() {
-        return comment;
+        return getString(DESCRIPTION_KEY);
     }
 
-    public String getSong() {
-        return song;
-    }
 
     public String getID() {
-        return uuid;
+        return getString(UUID_KEY);
     }
 
-    public void setEditedPhoto(Bitmap bitmap) {
-        this.editedPhoto = bitmap;
+    public void setEditedPhoto(ParseFile file) {
+        put(EDITED_PHOTO_KEY, file);
     }
 
     public void setCaption(String caption) {
-        this.caption = caption;
+        put(CAPTION_KEY, caption);
     }
 
     public void setComment(String comment) {
-        this.comment = comment;
-    }
-
-    public void setTags(ArrayList<String> tags) {
-        this.tags = tags;
-    }
-
-    public void setSong(String song) {
-        this.song = song;
+        put(DESCRIPTION_KEY, comment);
     }
 
     public void setPost(Post post) {
-        this.post = post;
+        put(POST_KEY, post);
     }
 
-    public void setVideoPath(String videoPath) {
-        this.videoPath = videoPath;
+    public void setVideoPath(ParseFile videoPath) {
+        put(VIDEO_PATH_KEY, videoPath);
     }
 
+    public ParseFile getEditedPhoto() {
+        return getParseFile(EDITED_PHOTO_KEY);
+    }
+
+    public ParseFile getVideo() {
+        return getParseFile(VIDEO_PATH_KEY);
+    }
+
+    public ParseUser getReviewer() {
+        return getParseUser(REVIEWER_KEY);
+    }
+
+    public void setReviewer(ParseUser u) {
+        put(REVIEWER_KEY, u);
+    }
 
     /**
      * When editing a post. This should be called once all the user reviewed the post.
@@ -122,84 +109,47 @@ public class Feedback implements Comparable, Parcelable {
         if (!missingData.isEmpty()) {
             throw new FeedbackException(missingData);
         }
-        this.post.addFeedback(this);
-        this.reviewer.addFeedback(this);
-
         //  upload to db.
+        saveInBackground();
     }
 
     private String checkData() {
         StringBuilder sbMissingData = new StringBuilder();
 
-        if (this.comment == null || this.comment.isEmpty()) {
+        if (getComment() == null || getComment().isEmpty()) {
             sbMissingData.append("Comments on edit  is missing\n");
         }
 
-        if (!videoPath.isEmpty()) {
-            File f = new File(videoPath);
-            if (!f.exists()) {
-                sbMissingData.append("Could not find video file!\tVideoPath: " + videoPath);
-            }
+        if (getVideo() == null) {
+            sbMissingData.append("Could not find video file!\tVideoPath: " + getVideo().getUrl());
 
-            if (this.editedPhoto == null) {
-                sbMissingData.append("Could not find edited photo!");
-            }
-
-        } else if(this.caption == null || this.caption.isEmpty()) {
+        } else if(getCaption() == null) {
             sbMissingData.append("Need to edit either photo or caption\n");
         }
 
         return sbMissingData.toString();
-
     }
 
-    protected Feedback(Parcel in) {
-        caption = in.readString();
-        comment = in.readString();
-        tags = in.createStringArrayList();
-        song = in.readString();
-        videoPath = in.readString();
-    }
 
-    public static final Creator<Feedback> CREATOR = new Creator<Feedback>() {
-        @Override
-        public Feedback createFromParcel(Parcel in) {
-            return new Feedback(in);
+    public static class Query extends ParseQuery<Feedback> {
+
+        public Query() {
+            super(Feedback.class);
         }
 
-        @Override
-        public Feedback[] newArray(int size) {
-            return new Feedback[size];
+        public Query currentUserFeedback() {
+            include("creator");
+            whereFullText(REVIEWER_KEY, ParseUser.getCurrentUser().getObjectId());
+            return this;
         }
-    };
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(caption);
-        dest.writeString(comment);
-        dest.writeStringList(tags);
-        dest.writeString(song);
-        dest.writeString(videoPath);
-    }
-
-    @Override
-    public int compareTo(@NonNull Object o) {
-        if (o instanceof Feedback) {
-            Feedback op = (Feedback) o;
-            return op.uuid.compareTo(this.uuid);
-        } else {
-            return 1;
+        public Query withPost(Post p) {
+            include("post");
+            whereFullText(POST_KEY, p.getID());
+            return this;
         }
     }
 
-    private String getUUID() {
-        String postID = this.post.getID();
-        String username = this.reviewer.getUserName();
-        return postID + "-" +  username + "-" + this.reviewer.getFeedbackList().size();
-    }
+
+
 }
