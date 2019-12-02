@@ -5,6 +5,8 @@
     <string name="post">Post</string>
     <string name="new_post">New Post</string>
     <string name="user_name">User Name</string>
+    <string name="feedback_caption">Caption</string>
+    <string name="reason">Reason</string>
     <string name="title_activity_login">Sign in</string>
     <string name="prompt_email">Email</string>
     <string name="prompt_email_conf">Confirm Email</string>
