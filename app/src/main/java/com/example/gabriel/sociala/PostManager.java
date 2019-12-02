@@ -108,6 +108,7 @@ public class PostManager {
         p.saveInBackground(callback);
     }
 
+
     public static class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
         ImageView bmImage;
 

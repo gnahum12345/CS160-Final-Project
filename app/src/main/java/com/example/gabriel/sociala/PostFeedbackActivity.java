@@ -1,13 +1,18 @@
 package com.example.gabriel.sociala;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import java.io.File;
 
 public class PostFeedbackActivity extends AppCompatActivity {
 
@@ -34,6 +39,27 @@ public class PostFeedbackActivity extends AppCompatActivity {
 
         addVideoButton = findViewById(R.id.add_video_button);
         postFeedbackButton = findViewById(R.id.post_feedback_button);
+        Intent i = getIntent();
+
+        String filePath = i.getStringExtra("filePath");
+        String captionString = i.getStringExtra("caption");
+        String reasonString = i.getStringExtra("reason");
+        caption.setText(captionString);
+        reason.setText(reasonString);
+
+        File imgFile = null;
+        if (filePath != null && !filePath.isEmpty())  {
+            File f = new File(filePath);
+            imgFile = f.listFiles()[0];
+            Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+            postImageView.setImageBitmap(myBitmap);
+        } else {
+            Toast.makeText(this, "Something went wrong.", Toast.LENGTH_LONG).show();
+        }
+
+
+
+
 
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -59,12 +85,14 @@ public class PostFeedbackActivity extends AppCompatActivity {
     }
 
     public void backToEdit() {
-        Intent intent = new Intent(this, EditFeedbackActivity.class);
-        startActivity(intent);
+        finish();
+//        Intent intent = new Intent(this, EditFeedbackActivity.class);
+//        startActivity(intent);
     }
 
     public void postFeedback() {
         // TODO: add to database and navigate to the post.
+
     }
 
     public void addVideo() {

@@ -153,27 +153,33 @@ public class Post extends ParseObject {
     }
 
 
-        public static class Query extends ParseQuery<Post> {
+    public static class Query extends ParseQuery<Post> {
 
-            public Query() {
-                super(Post.class);
-            }
-
-            public Query currentUserPost() {
-                include("creator");
-                whereEqualTo(INFLUENCER_KEY, false);
-                whereFullText(CREATOR_KEY, ParseUser.getCurrentUser().getObjectId());
-                return this;
-            }
-
-            public Query visibleUserPost() {
-                include("creator");
-                return this;
-            }
-
-            public Query areInfluencers() {
-                whereEqualTo(INFLUENCER_KEY, true);
-                return this;
-            }
+        public Query() {
+            super(Post.class);
         }
+
+        public Query currentUserPost() {
+            include("creator");
+            whereEqualTo(INFLUENCER_KEY, false);
+            whereFullText(CREATOR_KEY, ParseUser.getCurrentUser().getObjectId());
+            return this;
+        }
+
+        public Query visibleUserPost() {
+            include("creator");
+            return this;
+        }
+
+        public Query areInfluencers() {
+            whereEqualTo(INFLUENCER_KEY, true);
+            return this;
+        }
+
+
+        public Query specificPost(String id) {
+            whereEqualTo(UUID_KEY, id);
+            return this;
+        }
+    }
 }

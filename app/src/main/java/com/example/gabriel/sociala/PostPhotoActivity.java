@@ -44,11 +44,14 @@ public class PostPhotoActivity extends AppCompatActivity {
         profilePic = findViewById(R.id.profile_image);
         rv_caption = findViewById(R.id.editText_caption);
         rv_purpose = findViewById(R.id.editText_purpose);
-
-        ParseFile pf = ParseUser.getCurrentUser().getParseFile("profilePic");
-        if (pf != null) {
-            new PostManager.DownloadImageTask(profilePic)
-                    .execute(pf.getUrl());
+        try {
+            ParseFile pf = ParseUser.getCurrentUser().getParseFile("profilePic");
+            if (pf != null) {
+                new PostManager.DownloadImageTask(profilePic)
+                        .execute(pf.getUrl());
+            }
+        } catch (IllegalStateException e) {
+            // current user doesn't have a profile pic.
         }
         userName.setText(ParseUser.getCurrentUser().getUsername());
         Intent intent = getIntent();

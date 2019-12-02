@@ -235,15 +235,16 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                     Toast.makeText(getApplicationContext(), p.getPhoto().getUrl(), Toast.LENGTH_SHORT).show();
                     ClipboardManager clipboardManager = (ClipboardManager)getSystemService(CLIPBOARD_SERVICE);
                     ClipData myClip = ClipData.newPlainText("text", p.getPhoto().getUrl());
-
                     clipboardManager.setPrimaryClip(myClip);
-
+                    Intent i = new Intent(HomeActivity.this, EditFeedbackActivity.class);
+                    i.putExtra("postID", p.getID());
+                    startActivity(i);
                 }
             });
 
             PostManager.DownloadImageTask dimv = new PostManager.DownloadImageTask(gridHolder.imageView);
             dimv.execute(p.getPhoto().getUrl());
-            Toast.makeText(getApplicationContext(), p.getPhoto().getUrl(), Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getApplicationContext(), p.getPhoto().getUrl(), Toast.LENGTH_SHORT).show();
             gridHolder.textView.setText(p.getCreator().getUsername() + ": " + p.getCaption());
         }
 
