@@ -63,7 +63,7 @@ public class PostPhotoActivity extends AppCompatActivity {
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(PostPhotoActivity.this, HomeActivity.class)); 
+                startActivity(new Intent(PostPhotoActivity.this, HomeActivity.class));
                 finish();
             }
         });
