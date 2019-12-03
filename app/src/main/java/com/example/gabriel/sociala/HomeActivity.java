@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -81,8 +80,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                     case R.id.nav_profile:
                         Toast.makeText(context, "profile: " + ParseUser.getCurrentUser().getUsername(), Toast.LENGTH_SHORT).show();
                         Intent profileIntent = new Intent(HomeActivity.this, ProfileActivity.class);
-                        PostManager.getInstance().getInfluencers(myRecyclerAdapter, myPosts);
                         startActivity(profileIntent);
+                        finish();
                         break;
                 }
                 return true;
@@ -232,7 +231,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             gridHolder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(getApplicationContext(), p.getPhoto().getUrl(), Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getApplicationContext(), p.getPhoto().getUrl(), Toast.LENGTH_SHORT).show();
                     ClipboardManager clipboardManager = (ClipboardManager)getSystemService(CLIPBOARD_SERVICE);
                     ClipData myClip = ClipData.newPlainText("text", p.getPhoto().getUrl());
 
@@ -243,8 +242,15 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
             PostManager.DownloadImageTask dimv = new PostManager.DownloadImageTask(gridHolder.imageView);
             dimv.execute(p.getPhoto().getUrl());
-            Toast.makeText(getApplicationContext(), p.getPhoto().getUrl(), Toast.LENGTH_SHORT).show();
-            gridHolder.textView.setText(p.getCreator().getUsername() + ": " + p.getCaption());
+//            Toast.makeText(getApplicationContext(), p.getPhoto().getUrl(), Toast.LENGTH_SHORT).show();
+            String username = "";
+            try {
+                ParseUser creator = p.getCreator();
+                username = creator.fetchIfNeeded().getUsername();
+            } catch (com.parse.ParseException e) {
+                e.printStackTrace();
+            }
+            gridHolder.textView.setText(username + ": " + p.getCaption());
         }
 
         @Override
