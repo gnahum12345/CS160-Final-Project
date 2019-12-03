@@ -20,6 +20,7 @@
         <activity android:name=".PostFeedbackActivity" />
         <activity android:name=".EditFeedbackActivity" />
         <activity android:name=".MainActivity" />
+        <activity android:name=".ProfileActivity"/>
 
             <!-- <intent-filter> -->
             <!-- <action android:name="android.intent.action.MAIN" /> -->
