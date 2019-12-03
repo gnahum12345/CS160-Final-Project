@@ -121,7 +121,7 @@ public class Feedback extends ParseObject {
         }
 
         if (getVideo() == null) {
-            sbMissingData.append("Could not find video file!\tVideoPath: " + getVideo().getUrl());
+            sbMissingData.append("Could not find video file!\tVideoPath: ");
 
         } else if(getCaption() == null) {
             sbMissingData.append("Need to edit either photo or caption\n");
@@ -139,13 +139,13 @@ public class Feedback extends ParseObject {
 
         public Query currentUserFeedback() {
             include("creator");
-            whereFullText(REVIEWER_KEY, ParseUser.getCurrentUser().getObjectId());
+            whereEqualTo(REVIEWER_KEY, ParseUser.getCurrentUser());
             return this;
         }
 
         public Query withPost(Post p) {
             include("post");
-            whereFullText(POST_KEY, p.getID());
+            whereEqualTo(POST_KEY, p);
             return this;
         }
     }
