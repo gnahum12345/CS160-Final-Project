@@ -2,8 +2,11 @@ package com.example.gabriel.sociala;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -15,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.io.File;
 import java.util.ArrayList;
 
 public class PostPhotoActivity extends AppCompatActivity {
@@ -24,8 +28,8 @@ public class PostPhotoActivity extends AppCompatActivity {
     Button postButton;
     TextView userName;
     ImageView profilePic;
-    EditText caption;
-    EditText purpose;
+    EditText rv_caption;
+    EditText rv_purpose;
 
     ViewPager viewpager;
     LinearLayout sliderDotsPanel;
@@ -40,28 +44,40 @@ public class PostPhotoActivity extends AppCompatActivity {
         selectedImageView = findViewById(R.id.image_view);
         userName = findViewById(R.id.textView_username);
         profilePic = findViewById(R.id.profile_image);
-        caption = findViewById(R.id.editText_caption);
-        purpose = findViewById(R.id.editText_purpose);
+        rv_caption = findViewById(R.id.editText_caption);
+        rv_purpose = findViewById(R.id.editText_purpose);
 
         Intent intent = getIntent();
         Bundle args = getIntent().getBundleExtra("BUNDLE");
         ArrayList<String> selectedImageUri = (ArrayList<String>) args.getSerializable("ARRAYLIST");
 
-        viewpager = findViewById(R.id.view_pager);
 
+        final ArrayList<String> selectedImagePath = new ArrayList<String>();
+
+        for (int i=0; i<selectedImageUri.size(); i++) {
+            String imagePath = selectedImageUri.get(i);
+            Uri fileUri = Uri.parse(imagePath);
+
+            final String[] columns = { MediaStore.MediaColumns.DATA };
+            final Cursor cursor = this.getContentResolver().query(fileUri, columns, null, null, null);
+            cursor.moveToFirst();
+            int columnIndex = cursor.getColumnIndex(MediaStore.MediaColumns.DATA);
+            String filePath = cursor.getString(columnIndex);
+            selectedImagePath.add(filePath);
+        }
+
+
+        viewpager = findViewById(R.id.view_pager);
         sliderDotsPanel = (LinearLayout) findViewById(R.id.slider_dots);
 
-
         if (selectedImageUri.size() == 1){
-            final String image_path = selectedImageUri.get(0);
-            final Uri fileUri = Uri.parse(image_path);
+            final String imagePath = selectedImageUri.get(0);
+            final Uri fileUri = Uri.parse(imagePath);
             selectedImageView.setImageURI(fileUri);
 
         } else{
-
             viewpager = (ViewPager) findViewById(R.id.view_pager);
             ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(this, selectedImageUri);
-
             viewpager.setAdapter(viewPagerAdapter);
 
             dotscount = viewPagerAdapter.getCount();
@@ -101,7 +117,7 @@ public class PostPhotoActivity extends AppCompatActivity {
 
         }
 
-        /*
+
         backButton = findViewById(R.id.imageButtonBack);
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -115,8 +131,43 @@ public class PostPhotoActivity extends AppCompatActivity {
         postButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                ArrayList<File> files = new ArrayList<>();
+                for (int i = 0; i < selectedImagePath.size(); i++) {
+                    File f = new File(selectedImagePath.get(i));
+
+                    if (!f.exists()) {
+                        Snackbar.make(view, "oh oh this isn't right" + f.getAbsolutePath() + " " + f.exists(),Snackbar.LENGTH_LONG).show();
+                        return;
+                    }
+                    files.add(f);
+                }
+
+                String caption = rv_caption.getText().toString();
+                String purpose = rv_purpose.getText().toString();
+
+                if (caption.isEmpty()) {
+                    Snackbar.make(view, "Please fill out the caption of posting", Snackbar.LENGTH_INDEFINITE).setAction("Ok", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            finish();
+                        }
+                    }).show();
+                }
+
+                if (purpose.isEmpty()) {
+                    Snackbar.make(view, "Please fill out the purpose of posting", Snackbar.LENGTH_INDEFINITE).setAction("Ok", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            finish();
+                        }
+                    }).show();
+                }
+
+
+
                 finish();
             }
-        });*/
+        });
     }
 }
