@@ -1,6 +1,7 @@
 package com.example.gabriel.sociala;
 
 import android.Manifest;
+import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -25,6 +26,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class HomeActivity extends AppCompatActivity implements View.OnClickListener{
 
@@ -250,22 +255,37 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     private void pickImageFromGallery() {
         //intent to pick image
         Intent intent = new Intent(Intent.ACTION_PICK);
+        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
         intent.setType("image/*");
         startActivityForResult(intent, IMAGE_PICK_CODE);
     }
 
 
-    //handle result of picked image
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == RESULT_OK && requestCode == IMAGE_PICK_CODE){
-            Uri selectedImage = data.getData();
+        if (resultCode == RESULT_OK && requestCode == IMAGE_PICK_CODE) {
 
+            List<String> selectedImageUri = new ArrayList<>();
+            ClipData clipData = data.getClipData();
+
+            if (clipData != null){
+                for (int i=0; i<clipData.getItemCount(); i++) {
+                    Uri imageUri = clipData.getItemAt(i).getUri();
+                    selectedImageUri.add(imageUri.toString());
+                }
+            }
+
+
+            Bundle extra = new Bundle();
+            extra.putSerializable("ARRAYLIST", (Serializable) selectedImageUri);
             Intent intent = new Intent(this, PostPhotoActivity.class);
-            intent.putExtra("imagePath", selectedImage.toString());
+            intent.putExtra("BUNDLE", extra);
+            // intent.putExtra("filePath", filePath);
             startActivity(intent);
 
         }
+        super.onActivityResult(requestCode, resultCode, data);
+
     }
 
 }
