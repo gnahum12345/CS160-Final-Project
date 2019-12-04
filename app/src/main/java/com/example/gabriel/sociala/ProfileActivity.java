@@ -118,7 +118,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 }
             });
 
-            PostManager.DownloadImageTask dimv = new PostManager.DownloadImageTask(gridHolder.imageView);
+            PostManager.DownloadImageTask dimv = new PostManager.DownloadImageTask(gridHolder.imageView, 300, null);
             dimv.execute(p.getPhoto().getUrl());
 //            Toast.makeText(getApplicationContext(), p.getPhoto().getUrl(), Toast.LENGTH_SHORT).show();
             gridHolder.textView.setText(p.getCreator().getUsername() + ": " + p.getCaption());

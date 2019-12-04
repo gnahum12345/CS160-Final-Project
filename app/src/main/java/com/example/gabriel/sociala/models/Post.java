@@ -175,5 +175,9 @@ public class Post extends ParseObject {
             whereEqualTo(INFLUENCER_KEY, true);
             return this;
         }
+        public Query specificPost(String id) {
+            whereEqualTo(UUID_KEY, id);
+            return this;
+        }
     }
 }
