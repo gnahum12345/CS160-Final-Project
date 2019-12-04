@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.widget.ImageView;
 
+import com.example.gabriel.sociala.models.Feedback;
 import com.example.gabriel.sociala.models.Photo;
 import com.example.gabriel.sociala.models.Post;
 import com.parse.FindCallback;
@@ -24,12 +25,48 @@ import java.util.List;
 
 public class PostManager {
     private static final PostManager ourInstance = new PostManager();
+    private static final String TAG = "PostManager";
 
     public static PostManager getInstance() {
         return ourInstance;
     }
 
     private PostManager() {
+    }
+
+
+    public void getFeedbacks(final RecyclerView.Adapter adapter, final List<Feedback> obj) {
+        Feedback.Query feedbackQuery = new Feedback.Query();
+        feedbackQuery.currentUserFeedback().findInBackground(new FindCallback<Feedback>() {
+            @Override
+            public void done(List<Feedback> objects, ParseException e) {
+                if (e == null) {
+                    obj.clear();
+                    obj.addAll(objects);
+                    adapter.notifyDataSetChanged();
+                } else {
+                    e.printStackTrace();
+                    Log.e(TAG, "GET FEEDBACKS with USER: ", e);
+                }
+            }
+        });
+    }
+    public void getFeedbacks(Post p, final RecyclerView.Adapter adapter, final List<Feedback> obj) {
+        Feedback.Query feedbackQuery = new Feedback.Query();
+        feedbackQuery.withPost(p);
+        feedbackQuery.findInBackground(new FindCallback<Feedback>() {
+            @Override
+            public void done(List<Feedback> objects, ParseException e) {
+                if (e == null) {
+                    obj.clear();
+                    obj.addAll(objects);
+                    adapter.notifyDataSetChanged();
+                } else {
+                    e.printStackTrace();
+                    Log.e(TAG, "GET FEEDBACKS: ", e);
+                }
+            }
+        });
     }
 
     public void getFriends(final RecyclerView.Adapter adapter, final List<Post> adapterObj) {
@@ -44,7 +81,7 @@ public class PostManager {
                     adapter.notifyDataSetChanged();
                 } else {
                     e.printStackTrace();
-                    Log.e("Get Friends: ", "Failed to get friends: ");
+                    Log.e(TAG, "Failed to get friends: ");
                 }
             }
         });
@@ -61,7 +98,7 @@ public class PostManager {
                     adapterObj.addAll(objects);
                     adapter.notifyDataSetChanged();
                 } else {
-                    Log.e("Get influencers", "Failed to get posts ");
+                    Log.e(TAG, "Failed to get posts ");
                     e.printStackTrace();
                 }
             }
@@ -112,6 +149,8 @@ public class PostManager {
     public static class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
         ImageView bmImage;
         Integer width, height;
+        private final String TAG = "DownloadImageTask";
+
         public DownloadImageTask(ImageView bmImage, Integer width, Integer height) {
             this.bmImage = bmImage;
             this.width = width;
@@ -125,7 +164,7 @@ public class PostManager {
                 InputStream in = new java.net.URL(urldisplay).openStream();
                 mIcon11 = BitmapFactory.decodeStream(in);
             } catch (Exception e) {
-                Log.e("Error", e.getMessage());
+                Log.e(TAG, e.getMessage());
                 e.printStackTrace();
             }
             return mIcon11;

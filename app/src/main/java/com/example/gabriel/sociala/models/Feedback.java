@@ -139,13 +139,13 @@ public class Feedback extends ParseObject {
 
         public Query currentUserFeedback() {
             include("creator");
-            whereFullText(REVIEWER_KEY, ParseUser.getCurrentUser().getObjectId());
+            whereEqualTo(REVIEWER_KEY, ParseUser.getCurrentUser());
             return this;
         }
 
         public Query withPost(Post p) {
             include("post");
-            whereFullText(POST_KEY, p.getID());
+            whereEqualTo(POST_KEY, p);
             return this;
         }
     }
