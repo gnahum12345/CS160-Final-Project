@@ -14,6 +14,7 @@ import com.parse.FindCallback;
 import com.parse.ParseACL;
 import com.parse.ParseException;
 import com.parse.ParseFile;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
@@ -30,6 +31,22 @@ public class PostManager {
     }
 
     private PostManager() {
+    }
+
+    public void getAllUsers(final RecyclerView.Adapter adapter, final List<ParseUser> obj) {
+        ParseQuery<ParseUser> query = ParseQuery.getQuery("_User");
+        query.findInBackground(new FindCallback<ParseUser>() {
+            @Override
+            public void done(List<ParseUser> objects, ParseException e) {
+                if (e == null) {
+                    obj.clear();
+                    obj.addAll(objects);
+                    adapter.notifyDataSetChanged();
+                } else {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     public void getMyPosts(final RecyclerView.Adapter adapter, final List<Post> adapterObj) {
