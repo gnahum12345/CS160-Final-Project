@@ -62,7 +62,8 @@ public class PostFeedbackActivity extends AppCompatActivity {
             finish();
         } else {
             Post.Query query = new Post.Query();
-            query.specificPost(postID).findInBackground(new FindCallback<Post>() {
+            query = query.specificPost(postID);
+            query.findInBackground(new FindCallback<Post>() {
                 @Override
                 public void done(List<Post> objects, ParseException e) {
                     if (e == null) {
@@ -72,9 +73,9 @@ public class PostFeedbackActivity extends AppCompatActivity {
                             ParseUser parseUser = post.getCreator().fetchIfNeeded();
                             userName.setText(parseUser.getUsername());
 
-                            ParseFile pf = parseUser.getParseFile("");
+                            ParseFile pf = parseUser.getParseFile("profilePic");
                             if (pf != null) {
-                                new PostManager.DownloadImageTask(profilePic, 300, 0).execute(pf.getUrl());
+                                new PostManager.DownloadImageTask(profilePic, 300, null).execute(pf.getUrl());
                             }
                         } catch (ParseException e1) {
                             Log.e("POST FEEDBACK", "done: Failed in getting user. ", e1);
@@ -126,8 +127,6 @@ public class PostFeedbackActivity extends AppCompatActivity {
 
     public void backToEdit() {
         finish();
-//        Intent intent = new Intent(this, EditFeedbackActivity.class);
-//        startActivity(intent);
     }
 
     public void postFeedback() {
@@ -174,6 +173,7 @@ public class PostFeedbackActivity extends AppCompatActivity {
                     Toast.makeText(this, "didn't delete "+ f.toString(), Toast.LENGTH_SHORT).show();
                 }
             }
+            // deleting the overall folder.
             if (!parentDir.delete()) {
                 Toast.makeText(this, "Didn't delete directory " + parentDir.toString(), Toast.LENGTH_SHORT).show();
             }

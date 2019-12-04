@@ -41,7 +41,6 @@ public class EditFeedbackActivity extends AppCompatActivity {
     TextView userName;
     EditText caption, reason;
     private String filePath;
-    private static final int REQUEST_EXTERNAL_STORAGE_CODE = 1000;
     private static final String OUTPUT_PHOTO_DIRECTORY = "SocialA";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -133,7 +132,7 @@ public class EditFeedbackActivity extends AppCompatActivity {
                         ContextCompat.getExternalFilesDirs(getApplicationContext(), null);
                 File primaryExternalStorage = externalStorageVolumes[0];
 
-                filePath = Environment.getExternalStorageDirectory()+"/SocialA/tmp";
+                filePath = Environment.getExternalStorageDirectory()+"/" + OUTPUT_PHOTO_DIRECTORY;
 
                 // go to postFeedbackActivity with filePath.
                 Intent i = new Intent(EditFeedbackActivity.this, PostFeedbackActivity.class);
