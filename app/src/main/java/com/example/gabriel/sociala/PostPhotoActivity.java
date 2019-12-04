@@ -47,7 +47,7 @@ public class PostPhotoActivity extends AppCompatActivity {
         try {
             ParseFile pf = ParseUser.getCurrentUser().getParseFile("profilePic");
             if (pf != null) {
-                new PostManager.DownloadImageTask(profilePic)
+                new PostManager.DownloadImageTask(profilePic, 300, null)
                         .execute(pf.getUrl());
             }
         } catch (IllegalStateException e) {

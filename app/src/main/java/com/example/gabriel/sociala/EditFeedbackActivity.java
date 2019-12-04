@@ -1,6 +1,7 @@
 package com.example.gabriel.sociala;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -8,6 +9,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -40,7 +42,7 @@ public class EditFeedbackActivity extends AppCompatActivity {
     EditText caption, reason;
     private String filePath;
     private static final int REQUEST_EXTERNAL_STORAGE_CODE = 1000;
-
+    private static final String OUTPUT_PHOTO_DIRECTORY = "SocialA";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,33 +78,50 @@ public class EditFeedbackActivity extends AppCompatActivity {
                     e.printStackTrace();
                 } else if (objects.size() != 0) {
                     Post p = objects.get(0);
-                    ParseUser creator = p.getCreator();
                     try {
+                        ParseUser creator = p.getCreator().fetchIfNeeded();
+
+                        userName.setText(creator.getUsername());
                         ParseFile pf = creator.getParseFile("profilePic");
                         if (pf != null) {
-                            new PostManager.DownloadImageTask(profilePic)
+                            new PostManager.DownloadImageTask(profilePic, 300, null)
                                     .execute(pf.getUrl());
                         }
-                    } catch (IllegalStateException e1) {
+                    } catch (ParseException e1) {
                         // user doesn't have a profile pic.
+                        e1.printStackTrace();
                     }
-//                    userName.setText(creator.getUsername());
                     ParseFile pImg = p.getPhoto();
                     if (pImg != null) {
-                        new PostManager.DownloadImageTask(postImageView).execute(pImg.getUrl());
-                        setUpOnClickListeners(context);
+                        new PostManager.DownloadImageTask(postImageView, null, 280).execute(pImg.getUrl());
+                        setUpOnClickListeners(context, p.getID());
                     }
                 }
             }
         });
     }
 
-    private void setUpOnClickListeners(final Context context) {
+    private void setUpOnClickListeners(final Context context, final String postID) {
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // TODO: back to previous page.
-                finish();
+                new AlertDialog.Builder(EditFeedbackActivity.this)
+                        .setTitle("Exiting Feedback")
+                        .setMessage("Are you sure you want to exit and dismiss your feedback?")
+                        .setPositiveButton("Yes, get me out.", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                                finish();
+                            }
+                        })
+                        .setNegativeButton("No, let me edit!", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Toast.makeText(context, "You may continue to work on your feedback.", Toast.LENGTH_SHORT).show();
+                            }
+                        }).create().show();
             }
         });
 
@@ -115,11 +134,23 @@ public class EditFeedbackActivity extends AppCompatActivity {
                 File primaryExternalStorage = externalStorageVolumes[0];
 
                 filePath = Environment.getExternalStorageDirectory()+"/SocialA/tmp";
+
                 // go to postFeedbackActivity with filePath.
                 Intent i = new Intent(EditFeedbackActivity.this, PostFeedbackActivity.class);
+                String cap = caption.getText().toString();
+                String res = reason.getText().toString();
+                if (res.isEmpty()) {
+                    Toast.makeText(context, "Please fill out a reason for your changes.\nThis way others can learn from them.", Toast.LENGTH_LONG).show();
+                    return;
+                }
+                if (cap.isEmpty()) {
+                    Toast.makeText(context, "Please fill out a caption for your changes.\nThis way the user has all the requirements to post!", Toast.LENGTH_LONG).show();
+                    return;
+                }
                 i.putExtra("filePath", filePath);
-                i.putExtra("caption", caption.getText());
-                i.putExtra("reason", reason.getText());
+                i.putExtra("caption", cap);
+                i.putExtra("reason", res);
+                i.putExtra("postID", postID);
                 startActivity(i);
             }
         });
@@ -133,7 +164,7 @@ public class EditFeedbackActivity extends AppCompatActivity {
                 Bitmap b = bd.getBitmap();
                 Uri data = BitmapScalar.getUriFromBitmap(context, b);
                 dsPhotoEditorIntent.setData(data);
-                dsPhotoEditorIntent.putExtra(DsPhotoEditorConstants.DS_PHOTO_EDITOR_OUTPUT_DIRECTORY, "SocialA/tmp");
+                dsPhotoEditorIntent.putExtra(DsPhotoEditorConstants.DS_PHOTO_EDITOR_OUTPUT_DIRECTORY, OUTPUT_PHOTO_DIRECTORY);
                 int[] toolsToHide = {DsPhotoEditorActivity.TOOL_PIXELATE, DsPhotoEditorActivity.TOOL_ORIENTATION};
                 dsPhotoEditorIntent.putExtra(DsPhotoEditorConstants.DS_PHOTO_EDITOR_TOOLS_TO_HIDE, toolsToHide);
 

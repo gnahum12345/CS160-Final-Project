@@ -111,9 +111,11 @@ public class PostManager {
 
     public static class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
         ImageView bmImage;
-
-        public DownloadImageTask(ImageView bmImage) {
+        Integer width, height;
+        public DownloadImageTask(ImageView bmImage, Integer width, Integer height) {
             this.bmImage = bmImage;
+            this.width = width;
+            this.height = height;
         }
 
         protected Bitmap doInBackground(String... urls) {
@@ -130,7 +132,13 @@ public class PostManager {
         }
 
         protected void onPostExecute(Bitmap result) {
-            result = BitmapScalar.scaleToFitWidth(result, 300);
+            if (this.height != null && this.width != null) {
+                result = BitmapScalar.scaleToFill(result, this.width, this.height);
+            } else if (this.height != null) {
+                result = BitmapScalar.scaleToFitHeight(result, this.height);
+            } else if (this.width != null) {
+                result = BitmapScalar.scaleToFitWidth(result, this.width);
+            }
             bmImage.setImageBitmap(result);
         }
     }
