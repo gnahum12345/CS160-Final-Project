@@ -19,6 +19,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -48,7 +49,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         context = this;
 
         rv_Profile = (RecyclerView)findViewById(R.id.rvProfile);
-        logout = (TextView) findViewById(R.id.logout);
+        logout = (Button) findViewById(R.id.logout);
 
         createProfileGrids(rv_Profile);
 
@@ -69,7 +70,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                         break;
                     case R.id.nav_profile:
                         Toast.makeText(context, "profile: " + ParseUser.getCurrentUser().getUsername(), Toast.LENGTH_SHORT).show();
-                        PostManager.getInstance().getInfluencers(myRecyclerAdapter, myPosts);
+                        PostManager.getInstance().getMyPosts(myRecyclerAdapter, myPosts);
                         Toast.makeText(context, "Refreshing page", Toast.LENGTH_SHORT).show();
                         break;
                 }
@@ -145,7 +146,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         myPosts = new ArrayList<>();
         myRecyclerAdapter = new MyRecyclerAdapter(myPosts);
 
-        PostManager.getInstance().getInfluencers(myRecyclerAdapter, myPosts);
+        PostManager.getInstance().getMyPosts(myRecyclerAdapter, myPosts);
         rv_profile.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
         rv_profile.setAdapter(myRecyclerAdapter);
     }

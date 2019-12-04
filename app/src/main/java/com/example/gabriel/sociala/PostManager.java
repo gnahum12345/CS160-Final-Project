@@ -32,7 +32,7 @@ public class PostManager {
     private PostManager() {
     }
 
-    public void getFriends(final RecyclerView.Adapter adapter, final List<Post> adapterObj) {
+    protected void getFriends(final RecyclerView.Adapter adapter, final List<Post> adapterObj) {
         Post.Query postQuery = new Post.Query();
         postQuery = postQuery.visibleUserPost();
         postQuery.findInBackground(new FindCallback<Post>() {
@@ -50,7 +50,25 @@ public class PostManager {
         });
     }
 
-    public void getInfluencers(final RecyclerView.Adapter adapter, final List<Post> adapterObj) {
+    protected void getMyPosts(final RecyclerView.Adapter adapter, final List<Post> adapterObj) {
+        Post.Query postQuery = new Post.Query();
+        postQuery = postQuery.currentUserPost();
+        postQuery.findInBackground(new FindCallback<Post>() {
+            @Override
+            public void done(List<Post> objects, ParseException e) {
+                if (e == null) {
+                    adapterObj.clear();
+                    adapterObj.addAll(objects);
+                    adapter.notifyDataSetChanged();
+                } else {
+                    Log.e("Get my posts", "Failed to get posts ");
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    protected void getInfluencers(final RecyclerView.Adapter adapter, final List<Post> adapterObj) {
         Post.Query postQuery = new Post.Query();
         postQuery = postQuery.areInfluencers().visibleUserPost();
         postQuery.findInBackground(new FindCallback<Post>() {

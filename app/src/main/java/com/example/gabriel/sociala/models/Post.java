@@ -161,7 +161,6 @@ public class Post extends ParseObject {
 
             public Query currentUserPost() {
                 include("creator");
-                whereEqualTo(INFLUENCER_KEY, false);
                 whereFullText(CREATOR_KEY, ParseUser.getCurrentUser().getObjectId());
                 return this;
             }
