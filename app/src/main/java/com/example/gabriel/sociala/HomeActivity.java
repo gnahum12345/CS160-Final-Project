@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -65,7 +64,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         createHomeGrids(rv_explore);
 
         BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
-
+        bottomNavigationView.getMenu().findItem(R.id.nav_home).setChecked(true);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -80,6 +79,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                         break;
                     case R.id.nav_profile:
                         Toast.makeText(context, "profile: " + ParseUser.getCurrentUser().getUsername(), Toast.LENGTH_SHORT).show();
+                        Intent profileIntent = new Intent(HomeActivity.this, ProfileActivity.class);
+                        startActivity(profileIntent);
+                        finish();
                         break;
                 }
                 return true;
@@ -105,46 +107,43 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         myRecyclerAdapter = new MyRecyclerAdapter(myPosts);
 
         if (v == (RecyclerView)findViewById(R.id.rvFriends)) {
-//            bitmaps = getFriendsBitmaps();
             PostManager.getInstance().getFriends(myRecyclerAdapter, myPosts);
         } else {
-//            bitmaps = getExploreBitmaps();
             PostManager.getInstance().getInfluencers(myRecyclerAdapter, myPosts);
         }
-//        myRecyclerAdapter = new MyRecyclerAdapter(bitmaps);
         v.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
         v.setAdapter(myRecyclerAdapter);
     }
 
-    private Bitmap[] getFriendsBitmaps() {
-       Bitmap[] tempBitmaps = new Bitmap[9];
-       tempBitmaps[0] = BitmapFactory.decodeResource(getResources(), R.drawable.image_sample);
-       tempBitmaps[1] = BitmapFactory.decodeResource(getResources(), R.drawable.image_sample1);
-       tempBitmaps[2] = BitmapFactory.decodeResource(getResources(), R.drawable.image_sample2);
-       tempBitmaps[3] = BitmapFactory.decodeResource(getResources(), R.drawable.image_sample3);
-       tempBitmaps[4] = BitmapFactory.decodeResource(getResources(), R.drawable.image_sample4);
-       tempBitmaps[5] = BitmapFactory.decodeResource(getResources(), R.drawable.image_sample5);
-       tempBitmaps[6] = BitmapFactory.decodeResource(getResources(), R.drawable.image_sample6);
-       tempBitmaps[7] = BitmapFactory.decodeResource(getResources(), R.drawable.image_sample7);
-       tempBitmaps[8] = BitmapFactory.decodeResource(getResources(), R.drawable.mushroom);
-
-       return tempBitmaps;
-    }
-
-    private Bitmap[] getExploreBitmaps() {
-        Bitmap[] tempBitmaps = new Bitmap[9];
-        tempBitmaps[8] = BitmapFactory.decodeResource(getResources(), R.drawable.image_sample);
-        tempBitmaps[7] = BitmapFactory.decodeResource(getResources(), R.drawable.image_sample1);
-        tempBitmaps[6] = BitmapFactory.decodeResource(getResources(), R.drawable.image_sample2);
-        tempBitmaps[5] = BitmapFactory.decodeResource(getResources(), R.drawable.image_sample3);
-        tempBitmaps[4] = BitmapFactory.decodeResource(getResources(), R.drawable.image_sample4);
-        tempBitmaps[3] = BitmapFactory.decodeResource(getResources(), R.drawable.image_sample5);
-        tempBitmaps[2] = BitmapFactory.decodeResource(getResources(), R.drawable.image_sample6);
-        tempBitmaps[1] = BitmapFactory.decodeResource(getResources(), R.drawable.image_sample7);
-        tempBitmaps[0] = BitmapFactory.decodeResource(getResources(), R.drawable.mushroom);
-
-        return tempBitmaps;
-    }
+//    private Bitmap[] getFriendsBitmaps() {
+//       Bitmap[] tempBitmaps = new Bitmap[9];
+//       tempBitmaps[0] = BitmapFactory.decodeResource(getResources(), R.drawable.image_sample);
+//       tempBitmaps[1] = BitmapFactory.decodeResource(getResources(), R.drawable.image_sample1);
+//       tempBitmaps[2] = BitmapFactory.decodeResource(getResources(), R.drawable.image_sample2);
+//       tempBitmaps[3] = BitmapFactory.decodeResource(getResources(), R.drawable.image_sample3);
+//       tempBitmaps[4] = BitmapFactory.decodeResource(getResources(), R.drawable.image_sample4);
+//       tempBitmaps[5] = BitmapFactory.decodeResource(getResources(), R.drawable.image_sample5);
+//       tempBitmaps[6] = BitmapFactory.decodeResource(getResources(), R.drawable.image_sample6);
+//       tempBitmaps[7] = BitmapFactory.decodeResource(getResources(), R.drawable.image_sample7);
+//       tempBitmaps[8] = BitmapFactory.decodeResource(getResources(), R.drawable.mushroom);
+//
+//       return tempBitmaps;
+//    }
+//
+//    private Bitmap[] getExploreBitmaps() {
+//        Bitmap[] tempBitmaps = new Bitmap[9];
+//        tempBitmaps[8] = BitmapFactory.decodeResource(getResources(), R.drawable.image_sample);
+//        tempBitmaps[7] = BitmapFactory.decodeResource(getResources(), R.drawable.image_sample1);
+//        tempBitmaps[6] = BitmapFactory.decodeResource(getResources(), R.drawable.image_sample2);
+//        tempBitmaps[5] = BitmapFactory.decodeResource(getResources(), R.drawable.image_sample3);
+//        tempBitmaps[4] = BitmapFactory.decodeResource(getResources(), R.drawable.image_sample4);
+//        tempBitmaps[3] = BitmapFactory.decodeResource(getResources(), R.drawable.image_sample5);
+//        tempBitmaps[2] = BitmapFactory.decodeResource(getResources(), R.drawable.image_sample6);
+//        tempBitmaps[1] = BitmapFactory.decodeResource(getResources(), R.drawable.image_sample7);
+//        tempBitmaps[0] = BitmapFactory.decodeResource(getResources(), R.drawable.mushroom);
+//
+//        return tempBitmaps;
+//    }
 
     @Override
     public void onClick(View view) {
@@ -214,7 +213,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             this.bitmaps = bitmaps;
         }
 
-        public MyRecyclerAdapter(ArrayList<Post> posts) {
+        private MyRecyclerAdapter(ArrayList<Post> posts) {
             this.posts = posts;
         }
 
@@ -232,7 +231,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             gridHolder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(getApplicationContext(), p.getPhoto().getUrl(), Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getApplicationContext(), p.getPhoto().getUrl(), Toast.LENGTH_SHORT).show();
                     ClipboardManager clipboardManager = (ClipboardManager)getSystemService(CLIPBOARD_SERVICE);
                     ClipData myClip = ClipData.newPlainText("text", p.getPhoto().getUrl());
                     clipboardManager.setPrimaryClip(myClip);
@@ -245,7 +244,14 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             PostManager.DownloadImageTask dimv = new PostManager.DownloadImageTask(gridHolder.imageView, 300, null);
             dimv.execute(p.getPhoto().getUrl());
 //            Toast.makeText(getApplicationContext(), p.getPhoto().getUrl(), Toast.LENGTH_SHORT).show();
-            gridHolder.textView.setText(p.getCreator().getUsername() + ": " + p.getCaption());
+            String username = "";
+            try {
+                ParseUser creator = p.getCreator();
+                username = creator.fetchIfNeeded().getUsername();
+            } catch (com.parse.ParseException e) {
+                e.printStackTrace();
+            }
+            gridHolder.textView.setText(username + ": " + p.getCaption());
         }
 
         @Override
@@ -259,7 +265,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         ImageView imageView;
         TextView textView;
 
-        public GridHolder(@NonNull View itemView) {
+        private GridHolder(@NonNull View itemView) {
             super(itemView);
             imageView = itemView.findViewById(R.id.ivImage);
             textView = itemView.findViewById(R.id.tvCaption);

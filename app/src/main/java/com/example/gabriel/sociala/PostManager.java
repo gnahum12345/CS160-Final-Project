@@ -34,7 +34,7 @@ public class PostManager {
     private PostManager() {
     }
 
-
+  
     public void getFeedbacks(final RecyclerView.Adapter adapter, final List<Feedback> obj) {
         Feedback.Query feedbackQuery = new Feedback.Query();
         feedbackQuery.currentUserFeedback().findInBackground(new FindCallback<Feedback>() {
@@ -69,6 +69,25 @@ public class PostManager {
         });
     }
 
+                  
+    public void getMyPosts(final RecyclerView.Adapter adapter, final List<Post> adapterObj) {
+        Post.Query postQuery = new Post.Query();
+        postQuery = postQuery.currentUserPost();
+        postQuery.findInBackground(new FindCallback<Post>() {
+            @Override
+            public void done(List<Post> objects, ParseException e) {
+                if (e == null) {
+                    adapterObj.clear();
+                    adapterObj.addAll(objects);
+                    adapter.notifyDataSetChanged();
+                } else {
+                    e.printStackTrace();
+                    Log.e("Get My Posts", "Failed to get my own posts.... :'(", e);
+                }
+            }
+        });
+    }
+
     public void getFriends(final RecyclerView.Adapter adapter, final List<Post> adapterObj) {
         Post.Query postQuery = new Post.Query();
         postQuery = postQuery.visibleUserPost();
@@ -89,7 +108,7 @@ public class PostManager {
 
     public void getInfluencers(final RecyclerView.Adapter adapter, final List<Post> adapterObj) {
         Post.Query postQuery = new Post.Query();
-        postQuery = postQuery.areInfluencers().visibleUserPost();
+        postQuery = postQuery.areInfluencers();
         postQuery.findInBackground(new FindCallback<Post>() {
             @Override
             public void done(List<Post> objects, ParseException e) {
@@ -104,6 +123,7 @@ public class PostManager {
             }
         });
     }
+
     public void createPost(String caption, String purpose, ArrayList<File> files, ArrayList<String> users) {
         createPost(caption, purpose, files, users, new SaveCallback() {
             @Override
@@ -140,6 +160,8 @@ public class PostManager {
         for (int i = 0; i < users.size(); i++) {
             acl.setReadAccess(users.get(i), true);
         }
+        acl.setReadAccess(ParseUser.getCurrentUser(), true); // current user can always see their own posts.
+        acl.setWriteAccess(ParseUser.getCurrentUser(), true);
         p.setACL(acl);
         p.setCreator(ParseUser.getCurrentUser());
         p.saveInBackground(callback);

@@ -121,7 +121,7 @@ public class Feedback extends ParseObject {
         }
 
         if (getVideo() == null) {
-            sbMissingData.append("Could not find video file!\tVideoPath: " + getVideo().getUrl());
+            sbMissingData.append("Could not find video file!\tVideoPath: ");
 
         } else if(getCaption() == null) {
             sbMissingData.append("Need to edit either photo or caption\n");
