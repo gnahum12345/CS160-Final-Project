@@ -32,7 +32,25 @@ public class PostManager {
     private PostManager() {
     }
 
-    protected void getFriends(final RecyclerView.Adapter adapter, final List<Post> adapterObj) {
+    public void getMyPosts(final RecyclerView.Adapter adapter, final List<Post> adapterObj) {
+        Post.Query postQuery = new Post.Query();
+        postQuery = postQuery.currentUserPost();
+        postQuery.findInBackground(new FindCallback<Post>() {
+            @Override
+            public void done(List<Post> objects, ParseException e) {
+                if (e == null) {
+                    adapterObj.clear();
+                    adapterObj.addAll(objects);
+                    adapter.notifyDataSetChanged();
+                } else {
+                    e.printStackTrace();
+                    Log.e("Get My Posts", "Failed to get my own posts.... :'(", e);
+                }
+            }
+        });
+    }
+
+    public void getFriends(final RecyclerView.Adapter adapter, final List<Post> adapterObj) {
         Post.Query postQuery = new Post.Query();
         postQuery = postQuery.visibleUserPost();
         postQuery.findInBackground(new FindCallback<Post>() {
@@ -50,27 +68,9 @@ public class PostManager {
         });
     }
 
-    protected void getMyPosts(final RecyclerView.Adapter adapter, final List<Post> adapterObj) {
-        Post.Query postQuery = new Post.Query();
-        postQuery = postQuery.currentUserPost();
-        postQuery.findInBackground(new FindCallback<Post>() {
-            @Override
-            public void done(List<Post> objects, ParseException e) {
-                if (e == null) {
-                    adapterObj.clear();
-                    adapterObj.addAll(objects);
-                    adapter.notifyDataSetChanged();
-                } else {
-                    Log.e("Get my posts", "Failed to get posts ");
-                    e.printStackTrace();
-                }
-            }
-        });
-    }
-
     protected void getInfluencers(final RecyclerView.Adapter adapter, final List<Post> adapterObj) {
         Post.Query postQuery = new Post.Query();
-        postQuery = postQuery.areInfluencers().visibleUserPost();
+        postQuery = postQuery.areInfluencers();
         postQuery.findInBackground(new FindCallback<Post>() {
             @Override
             public void done(List<Post> objects, ParseException e) {
@@ -85,6 +85,7 @@ public class PostManager {
             }
         });
     }
+
     public void createPost(String caption, String purpose, ArrayList<File> files, ArrayList<String> users) {
         createPost(caption, purpose, files, users, new SaveCallback() {
             @Override
@@ -121,6 +122,8 @@ public class PostManager {
         for (int i = 0; i < users.size(); i++) {
             acl.setReadAccess(users.get(i), true);
         }
+        acl.setReadAccess(ParseUser.getCurrentUser(), true); // current user can always see their own posts.
+        acl.setWriteAccess(ParseUser.getCurrentUser(), true);
         p.setACL(acl);
         p.setCreator(ParseUser.getCurrentUser());
         p.saveInBackground(callback);
