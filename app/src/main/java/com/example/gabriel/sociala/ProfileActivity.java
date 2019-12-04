@@ -54,6 +54,8 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
         BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
         bottomNavigationView.getMenu().findItem(R.id.nav_profile).setChecked(true);
+        Toast.makeText(context, "profile: " + ParseUser.getCurrentUser().getUsername(), Toast.LENGTH_SHORT).show();
+
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -61,6 +63,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                     case R.id.nav_home:
                         Intent profileIntent = new Intent(ProfileActivity.this, HomeActivity.class);
                         startActivity(profileIntent);
+                        finish();
                         PostManager.getInstance().getFriends(myRecyclerAdapter, myPosts);
                         break;
                     case R.id.nav_add:
@@ -68,9 +71,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                         postPhoto();
                         break;
                     case R.id.nav_profile:
-                        Toast.makeText(context, "profile: " + ParseUser.getCurrentUser().getUsername(), Toast.LENGTH_SHORT).show();
-                        PostManager.getInstance().getInfluencers(myRecyclerAdapter, myPosts);
-                        Toast.makeText(context, "Refreshing page", Toast.LENGTH_SHORT).show();
+                        PostManager.getInstance().getMyPosts(myRecyclerAdapter, myPosts);
                         break;
                 }
                 return true;
@@ -108,10 +109,9 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             gridHolder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(getApplicationContext(), p.getPhoto().getUrl(), Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getApplicationContext(), p.getPhoto().getUrl(), Toast.LENGTH_SHORT).show();
                     ClipboardManager clipboardManager = (ClipboardManager)getSystemService(CLIPBOARD_SERVICE);
                     ClipData myClip = ClipData.newPlainText("text", p.getPhoto().getUrl());
-
                     clipboardManager.setPrimaryClip(myClip);
 
                 }
@@ -119,7 +119,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
             PostManager.DownloadImageTask dimv = new PostManager.DownloadImageTask(gridHolder.imageView);
             dimv.execute(p.getPhoto().getUrl());
-            Toast.makeText(getApplicationContext(), p.getPhoto().getUrl(), Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getApplicationContext(), p.getPhoto().getUrl(), Toast.LENGTH_SHORT).show();
             gridHolder.textView.setText(p.getCreator().getUsername() + ": " + p.getCaption());
         }
 
@@ -145,7 +145,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         myPosts = new ArrayList<>();
         myRecyclerAdapter = new MyRecyclerAdapter(myPosts);
 
-        PostManager.getInstance().getInfluencers(myRecyclerAdapter, myPosts);
+        PostManager.getInstance().getMyPosts(myRecyclerAdapter, myPosts);
         rv_profile.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
         rv_profile.setAdapter(myRecyclerAdapter);
     }
@@ -156,6 +156,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             ParseUser.logOut();
             Intent logoutIntent = new Intent(ProfileActivity.this, LoginActivity.class);
             startActivity(logoutIntent);
+            finish();
         }
     }
 
@@ -182,7 +183,6 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
     private void pickImageFromGallery() {
         //intent to pick image
-
         Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         intent.setType("image/*");
         startActivityForResult(intent, IMAGE_PICK_CODE);
