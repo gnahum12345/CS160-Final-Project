@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/post_top_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="0dp">
+
+        <Button
+            android:id="@+id/post_detail_back_button"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="365dp"
+            android:background="@drawable/backbutton"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/btn_explore"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:gravity="center_vertical"
+            android:text="View Post"
+            android:textColor="@color/colorPrimary"
+            android:textSize="25sp"
+            android:textStyle="bold" />
+
+    </RelativeLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_below="@+id/post_top_bar"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"/>
+
+    <RelativeLayout
+        android:layout_below="@+id/post_top_bar"
+        android:layout_marginTop="1dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:id="@+id/post_owner_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:layout_margin="20dp"
+                android:id="@+id/post_owner_avator"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/oski"
+                app:civ_border_color="#FF000000"
+                app:civ_border_width="2dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.044"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.193" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:text="Oski Bear"
+                android:textStyle="bold"
+                android:layout_centerVertical="true"
+                android:layout_toEndOf="@+id/post_owner_avator"
+                android:textSize="25sp"
+                android:layout_height="wrap_content"/>
+        </RelativeLayout>
+
+
+
+        <ImageView
+            android:id="@+id/post_photo"
+            android:layout_below="@+id/post_owner_info"
+            android:layout_width="match_parent"
+            android:layout_height="280dp"
+            android:background="@android:color/darker_gray"
+            android:scaleType="centerCrop" />
+
+        <TextView
+            android:id="@+id/post_caption"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Caption example here"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:layout_margin="20dp"
+            android:layout_below="@+id/post_photo"/>
+
+        <TextView
+            android:id="@+id/post_requirement"
+            android:padding="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/post_caption"
+            android:layout_marginStart="20dp"
+            android:layout_marginBottom="10dp"
+            android:text="Hi everyone, I want to make this post fabulous on Ins,hjjjiijijijiji hah   ah ah ah ah ahaha ha ah aha ha ah a ahaaha haha aaha ahaa ha aah haaha ha ah ahaha ahaha ha  aa ah ahahah a hahh"/>
+
+
+    </RelativeLayout>
+
+    <Button
+        android:id="@+id/view_feedback_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="20dp"
+        android:textSize="15sp"
+        android:textColor="@color/colorPrimary"
+        android:text=" View Feedbacks " />
+
+</RelativeLayout>

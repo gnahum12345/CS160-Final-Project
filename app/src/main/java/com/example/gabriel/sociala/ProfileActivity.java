@@ -19,6 +19,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -48,7 +49,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         context = this;
 
         rv_Profile = (RecyclerView)findViewById(R.id.rvProfile);
-        logout = (TextView) findViewById(R.id.logout);
+        logout = (Button) findViewById(R.id.logout);
 
         createProfileGrids(rv_Profile);
 

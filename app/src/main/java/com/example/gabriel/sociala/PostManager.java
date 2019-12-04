@@ -124,7 +124,7 @@ public class PostManager {
         });
     }
 
-    public void getInfluencers(final RecyclerView.Adapter adapter, final List<Post> adapterObj) {
+    protected void getInfluencers(final RecyclerView.Adapter adapter, final List<Post> adapterObj) {
         Post.Query postQuery = new Post.Query();
         postQuery = postQuery.areInfluencers();
         postQuery.findInBackground(new FindCallback<Post>() {

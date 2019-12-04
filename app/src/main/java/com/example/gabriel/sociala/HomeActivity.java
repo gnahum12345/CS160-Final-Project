@@ -80,6 +80,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                     case R.id.nav_profile:
                         Toast.makeText(context, "profile: " + ParseUser.getCurrentUser().getUsername(), Toast.LENGTH_SHORT).show();
                         Intent profileIntent = new Intent(HomeActivity.this, ProfileActivity.class);
+
                         startActivity(profileIntent);
                         finish();
                         break;
