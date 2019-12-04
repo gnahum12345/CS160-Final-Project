@@ -68,7 +68,6 @@ public class PostFeedbackActivity extends AppCompatActivity {
                 public void done(List<Post> objects, ParseException e) {
                     if (e == null) {
                         post = objects.get(0);
-
                         try {
                             ParseUser parseUser = post.getCreator().fetchIfNeeded();
                             userName.setText(parseUser.getUsername());

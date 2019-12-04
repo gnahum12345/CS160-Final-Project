@@ -17,7 +17,10 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.gabriel.sociala.models.Feedback;
 import com.example.gabriel.sociala.models.Post;
+import com.parse.FindCallback;
+import com.parse.ParseException;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
@@ -28,9 +31,8 @@ public class FeedbacksActivity extends AppCompatActivity implements View.OnClick
     Button back;
     private MyRecyclerAdapter myRecyclerAdapter;
     RecyclerView rv_feedbacks;
-    ArrayList<Post> myPosts;
-
-
+    ArrayList<Feedback> myPosts;
+    Post post;
     /*TODO, jump to a feedback detail page when click on a feedback grid*/
 
     @Override
@@ -40,7 +42,24 @@ public class FeedbacksActivity extends AppCompatActivity implements View.OnClick
 
         back = (Button) findViewById(R.id.feedbacks_back_button);
         rv_feedbacks = (RecyclerView) findViewById(R.id.rvFeedbacks);
-        createFeedbackGrids(rv_feedbacks);
+        Intent i = getIntent();
+        final String objectID = i.getStringExtra("postID");
+        Post.Query query = new Post.Query().specificPost(objectID);
+        query.findInBackground(new FindCallback<Post>() {
+            @Override
+            public void done(List<Post> objects, ParseException e) {
+                if (e == null) {
+                    if (objects.size() == 0) {
+                        finish();
+                    }
+                    post = objects.get(0);
+                    if (post == null) {
+                        return;
+                    }
+                    createFeedbackGrids(rv_feedbacks);
+                }
+            }
+        });
         back.setOnClickListener(this);
 
     }
@@ -49,8 +68,7 @@ public class FeedbacksActivity extends AppCompatActivity implements View.OnClick
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.feedbacks_back_button) {
-            Intent postIntent = new Intent(FeedbacksActivity.this, PostDetailActivity.class);
-            startActivity(postIntent);
+            finish();
         }
     }
 
@@ -58,14 +76,11 @@ public class FeedbacksActivity extends AppCompatActivity implements View.OnClick
 
         Bitmap[] bitmaps;
 
-        List<Post> posts;
+        List<Feedback> feedbacks;
 
-        public MyRecyclerAdapter(Bitmap[] bitmaps) {
-            this.bitmaps = bitmaps;
-        }
 
-        private MyRecyclerAdapter(ArrayList<Post> posts) {
-            this.posts = posts;
+        private MyRecyclerAdapter(ArrayList<Feedback> feedbacks) {
+            this.feedbacks = feedbacks;
         }
 
         @NonNull
@@ -77,27 +92,23 @@ public class FeedbacksActivity extends AppCompatActivity implements View.OnClick
 
         @Override
         public void onBindViewHolder(@NonNull final GridHolder gridHolder, int i) {
-//            gridHolder.imageView.setImageBitmap(bitmaps[i]);
-            final Post p = posts.get(i);
+            final Feedback p = feedbacks.get(i);
             gridHolder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-//                    Toast.makeText(getApplicationContext(), p.getPhoto().getUrl(), Toast.LENGTH_SHORT).show();
                     ClipboardManager clipboardManager = (ClipboardManager)getSystemService(CLIPBOARD_SERVICE);
-                    ClipData myClip = ClipData.newPlainText("text", p.getPhoto().getUrl());
-
+                    ClipData myClip = ClipData.newPlainText("text", p.getEditedPhoto().getUrl());
                     clipboardManager.setPrimaryClip(myClip);
 
                 }
             });
 
-            PostManager.DownloadImageTask dimv = new PostManager.DownloadImageTask(gridHolder.imageView);
-            dimv.execute(p.getPhoto().getUrl());
-//            Toast.makeText(getApplicationContext(), p.getPhoto().getUrl(), Toast.LENGTH_SHORT).show();
+            PostManager.DownloadImageTask dimv = new PostManager.DownloadImageTask(gridHolder.imageView, 280, 0);
+            dimv.execute(p.getEditedPhoto().getUrl());
             String username = "";
             try {
-                ParseUser creator = p.getCreator();
-                username = creator.fetchIfNeeded().getUsername();
+                ParseUser reviewer = p.getReviewer();
+                username = reviewer.fetchIfNeeded().getUsername();
             } catch (com.parse.ParseException e) {
                 e.printStackTrace();
             }
@@ -107,16 +118,16 @@ public class FeedbacksActivity extends AppCompatActivity implements View.OnClick
 
         @Override
         public int getItemCount() {
-            return posts.size();
+            return feedbacks.size();
         }
     }
 
-    private void createFeedbackGrids(RecyclerView v) {
+    protected void createFeedbackGrids(RecyclerView v) {
         Bitmap[] bitmaps;
         myPosts = new ArrayList<>();
         myRecyclerAdapter = new MyRecyclerAdapter(myPosts);
 
-        PostManager.getInstance().getFriends(myRecyclerAdapter, myPosts);
+        PostManager.getInstance().getFeedbacks(post, myRecyclerAdapter, myPosts);
 
         v.setLayoutManager(new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL));
         v.setAdapter(myRecyclerAdapter);

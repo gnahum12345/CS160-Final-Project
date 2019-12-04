@@ -236,7 +236,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                     ClipboardManager clipboardManager = (ClipboardManager)getSystemService(CLIPBOARD_SERVICE);
                     ClipData myClip = ClipData.newPlainText("text", p.getPhoto().getUrl());
                     clipboardManager.setPrimaryClip(myClip);
-                    Intent i = new Intent(HomeActivity.this, EditFeedbackActivity.class);
+                    Intent i = new Intent(HomeActivity.this, PostDetailActivity.class);
                     i.putExtra("postID", p.getID());
                     startActivity(i);
                 }

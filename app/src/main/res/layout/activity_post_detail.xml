@@ -58,7 +58,7 @@
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:layout_margin="20dp"
-                android:id="@+id/post_owner_avator"
+                android:id="@+id/profile_pic"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:src="@drawable/oski"
@@ -71,10 +71,11 @@
 
             <TextView
                 android:layout_width="wrap_content"
+                android:id="@+id/username"
                 android:text="Oski Bear"
                 android:textStyle="bold"
                 android:layout_centerVertical="true"
-                android:layout_toEndOf="@+id/post_owner_avator"
+                android:layout_toEndOf="@+id/profile_pic"
                 android:textSize="25sp"
                 android:layout_height="wrap_content"/>
         </RelativeLayout>
@@ -122,5 +123,17 @@
         android:textSize="15sp"
         android:textColor="@color/colorPrimary"
         android:text=" View Feedbacks " />
+
+    <Button
+        android:id="@+id/provide_feedback_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/view_feedback_btn"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="121dp"
+        android:layout_marginBottom="22dp"
+        android:text="Provide Feedback here!"
+        android:textColor="@color/colorPrimary"
+        android:textSize="15sp" />
 
 </RelativeLayout>
