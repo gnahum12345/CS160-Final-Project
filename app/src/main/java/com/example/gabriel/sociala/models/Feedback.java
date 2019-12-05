@@ -148,6 +148,11 @@ public class Feedback extends ParseObject {
             whereEqualTo(POST_KEY, p);
             return this;
         }
+
+        public Query specificFeedback(String id) {
+            whereEqualTo(UUID_KEY, id);
+            return this;
+        }
     }
 
 

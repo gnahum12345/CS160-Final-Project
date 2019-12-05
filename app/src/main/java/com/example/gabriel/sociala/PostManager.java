@@ -1,11 +1,15 @@
 package com.example.gabriel.sociala;
 
 
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.widget.Button;
 import android.widget.ImageView;
 
 import com.example.gabriel.sociala.models.Feedback;
@@ -190,6 +194,14 @@ public class PostManager {
         ImageView bmImage;
         Integer width, height;
         private final String TAG = "DownloadImageTask";
+        Button btn;
+        Resources r;
+        public DownloadImageTask(Button b, Integer w, Integer h, Resources r) {
+            this.btn = b;
+            this.width = w;
+            this.height = h;
+            this.r = r;
+        }
 
         public DownloadImageTask(ImageView bmImage, Integer width, Integer height) {
             this.bmImage = bmImage;
@@ -218,7 +230,13 @@ public class PostManager {
             } else if (this.width != null) {
                 result = BitmapScalar.scaleToFitWidth(result, this.width);
             }
-            bmImage.setImageBitmap(result);
+
+            if (btn != null) {
+                Drawable d = new BitmapDrawable(this.r, result);
+                btn.setBackground(d);
+            } else {
+                bmImage.setImageBitmap(result);
+            }
         }
     }
 

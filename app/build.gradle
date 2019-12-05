@@ -23,7 +23,7 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation(name:'ds-photo-editor-sdk-v9', ext:'aar')
+    implementation(name: 'ds-photo-editor-sdk-v9', ext: 'aar')
     implementation 'io.reactivex.rxjava2:rxjava:2.1.0'
     implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
     implementation 'com.squareup.picasso:picasso:2.71828'

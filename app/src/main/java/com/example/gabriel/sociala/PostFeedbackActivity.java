@@ -52,6 +52,33 @@ public class PostFeedbackActivity extends AppCompatActivity {
         addVideoButton = findViewById(R.id.add_video_button);
         postFeedbackButton = findViewById(R.id.post_feedback_button);
         Intent i = getIntent();
+        String feedBackId = i.getStringExtra("feedbackID");
+
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                backToEdit();
+            }
+        });
+
+        postFeedbackButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                postFeedback();
+            }
+        });
+
+        addVideoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addVideo(); // currently doesn't do anything.
+            }
+        });
+
+        if (feedBackId != null) {
+            makeFeedbackScreen(feedBackId);
+            return;
+        }
 
         String filePath = i.getStringExtra("filePath");
         String captionString = i.getStringExtra("caption");
@@ -68,7 +95,6 @@ public class PostFeedbackActivity extends AppCompatActivity {
                 public void done(List<Post> objects, ParseException e) {
                     if (e == null) {
                         post = objects.get(0);
-
                         try {
                             ParseUser parseUser = post.getCreator().fetchIfNeeded();
                             userName.setText(parseUser.getUsername());
@@ -102,27 +128,65 @@ public class PostFeedbackActivity extends AppCompatActivity {
         }
 
 
-        backButton.setOnClickListener(new View.OnClickListener() {
+
+
+    }
+
+    private void makeFeedbackScreen(String id) {
+        Feedback.Query query = new Feedback.Query();
+        query = query.specificFeedback(id);
+        query.findInBackground(new FindCallback<Feedback>() {
             @Override
-            public void onClick(View v) {
-                backToEdit();
+            public void done(List<Feedback> objects, ParseException e) {
+                if (e != null) {
+                    e.printStackTrace();
+                    Log.e("PostFeedback", "done: ", e);
+                } else {
+                    if (objects.size() == 0) {
+                        finish();
+                    }
+                    final Feedback f = objects.get(0);
+                    new PostManager.DownloadImageTask(postImageView, 300, null).execute(f.getEditedPhoto().getUrl());
+                    try {
+                        ParseUser reviewer = f.getReviewer();
+                        reviewer = reviewer.fetchIfNeeded();
+                        userName.setText(reviewer.getUsername());
+                        ParseFile pf = reviewer.getParseFile("profilePic");
+                        if (pf != null) {
+                            new PostManager.DownloadImageTask(profilePic, 200, null).execute(pf.getUrl());
+                        }
+                    } catch (ParseException e1) {
+                        e1.printStackTrace();
+                    }
+                    caption.setText(f.getCaption());
+                    caption.setClickable(false);
+                    reason.setText(f.getComment());
+                    reason.setClickable(false);
+                    new PostManager.DownloadImageTask(addVideoButton, 300, null, getResources()).execute(f.getEditedPhoto().getUrl());
+
+                    postFeedbackButton.setVisibility(View.INVISIBLE);
+                    addVideoButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            ParseFile pf = f.getVideo();
+                            if (pf == null) {
+                                return;
+                            }
+
+                            Intent intent = new Intent(PostFeedbackActivity.this, PlayVideoActivity.class);
+                            intent.putExtra("file", pf.getUrl());
+                            try {
+                                intent.putExtra("filePath", pf.getFile().getAbsolutePath());
+                            } catch (ParseException ex) {
+                                ex.printStackTrace();
+                            }
+                            startActivity(intent);
+
+                        }
+                    });
+                }
             }
         });
-
-        postFeedbackButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                postFeedback();
-            }
-        });
-
-        addVideoButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addVideo(); // currently doesn't do anything.
-            }
-        });
-
     }
 
     public void backToEdit() {
