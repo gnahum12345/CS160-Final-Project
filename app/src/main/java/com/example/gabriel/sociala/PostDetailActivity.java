@@ -122,6 +122,7 @@ public class PostDetailActivity extends AppCompatActivity implements View.OnClic
             finish();
         } else if (v.getId() == R.id.view_feedback_btn) {
             Intent feedbacksIntent = new Intent(PostDetailActivity.this, FeedbacksActivity.class);
+            feedbacksIntent.putExtra("postID", post.getID());
             startActivity(feedbacksIntent);
         }
     }

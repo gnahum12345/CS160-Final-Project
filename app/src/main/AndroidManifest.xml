@@ -17,64 +17,57 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
+        <activity android:name=".PlayVideoActivity"></activity>
         <activity android:name=".PostFeedbackActivity" />
         <activity android:name=".EditFeedbackActivity" />
-        <activity android:name=".MainActivity" /> 
+        <activity android:name=".MainActivity" />
         <activity android:name=".HomeActivity" />
-        <activity android:name=".ProfileActivity"/>
-        <activity android:name=".FeedbacksActivity"/>
+        <activity android:name=".ProfileActivity" />
+        <activity android:name=".FeedbacksActivity" />
         <activity android:name=".PostDetailActivity">
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.MAIN" />-->
 
-<!--                <category android:name="android.intent.category.LAUNCHER" />-->
-<!--            </intent-filter>-->
+            <!-- <intent-filter> -->
+            <!-- <action android:name="android.intent.action.MAIN" /> -->
+
+
+            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+            <!-- </intent-filter> -->
         </activity>
-
         <activity
             android:name=".SignUpActivity"
             android:label="@string/title_activity_sign_up"
             android:theme="@style/AppTheme.NoActionBar" />
-
         <activity android:name=".LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity> 
-      
+        </activity>
         <activity
             android:name=".PostPhotoActivity"
-            android:screenOrientation="portrait" />
-
-        <!-- Photo Editor SDK Activities -->
+            android:screenOrientation="portrait" /> <!-- Photo Editor SDK Activities -->
         <activity
             android:name="com.dsphotoeditor.sdk.activity.DsPhotoEditorActivity"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Holo.NoActionBar" />
-
         <activity
             android:name="com.dsphotoeditor.sdk.activity.DsPhotoEditorStickerActivity"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Holo.NoActionBar" />
-
         <activity
             android:name="com.dsphotoeditor.sdk.activity.DsPhotoEditorTextActivity"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Holo.NoActionBar"
             android:windowSoftInputMode="adjustPan" />
-
         <activity
             android:name="com.dsphotoeditor.sdk.activity.DsPhotoEditorCropActivity"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Holo.NoActionBar" />
-
         <activity
             android:name="com.dsphotoeditor.sdk.activity.DsPhotoEditorDrawActivity"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Holo.NoActionBar" />
-
     </application>
 
 </manifest>

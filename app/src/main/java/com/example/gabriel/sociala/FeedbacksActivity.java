@@ -92,28 +92,33 @@ public class FeedbacksActivity extends AppCompatActivity implements View.OnClick
 
         @Override
         public void onBindViewHolder(@NonNull final GridHolder gridHolder, int i) {
-            final Feedback p = feedbacks.get(i);
+            final Feedback f = feedbacks.get(i);
             gridHolder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     ClipboardManager clipboardManager = (ClipboardManager)getSystemService(CLIPBOARD_SERVICE);
-                    ClipData myClip = ClipData.newPlainText("text", p.getEditedPhoto().getUrl());
+                    ClipData myClip = ClipData.newPlainText("text", f.getEditedPhoto().getUrl());
                     clipboardManager.setPrimaryClip(myClip);
+                    Intent i = new Intent(FeedbacksActivity.this, PostFeedbackActivity.class);
+                    String id = f.getObjectId();
+                    i.putExtra("feedbackID", id);
+                    startActivity(i);
+
 
                 }
             });
 
-            PostManager.DownloadImageTask dimv = new PostManager.DownloadImageTask(gridHolder.imageView, 280, 0);
-            dimv.execute(p.getEditedPhoto().getUrl());
+            PostManager.DownloadImageTask dimv = new PostManager.DownloadImageTask(gridHolder.imageView, 280, null);
+            dimv.execute(f.getEditedPhoto().getUrl());
             String username = "";
             try {
-                ParseUser reviewer = p.getReviewer();
+                ParseUser reviewer = f.getReviewer();
                 username = reviewer.fetchIfNeeded().getUsername();
             } catch (com.parse.ParseException e) {
                 e.printStackTrace();
             }
             gridHolder.username.setText(username);
-            gridHolder.userComment.setText(p.getCaption());
+            gridHolder.userComment.setText(f.getCaption());
         }
 
         @Override
