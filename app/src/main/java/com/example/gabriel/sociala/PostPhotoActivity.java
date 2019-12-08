@@ -1,9 +1,11 @@
 package com.example.gabriel.sociala;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
@@ -12,6 +14,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.gabriel.sociala.models.Post;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseUser;
@@ -19,11 +22,13 @@ import com.parse.SaveCallback;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 
-public class PostPhotoActivity extends AppCompatActivity {
+public class PostPhotoActivity extends AppCompatActivity  implements PostManager.PostManagerListener {
+
 
     ImageView selectedImageView;
     ImageButton backButton;
@@ -33,7 +38,7 @@ public class PostPhotoActivity extends AppCompatActivity {
     CircleImageView profilePic;
     EditText rv_caption;
     EditText rv_purpose;
-
+    final ArrayList<File> files = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,6 +81,7 @@ public class PostPhotoActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 File f = new File(filePath);
+                files.add(f); // add all files.
                 String caption = rv_caption.getText().toString();
                 String purpose = rv_purpose.getText().toString();
                 if (!f.exists()) {
@@ -90,20 +96,56 @@ public class PostPhotoActivity extends AppCompatActivity {
                         }
                     }).show();
                 }
-                ArrayList<File> files = new ArrayList<>();
-                files.add(f);
-                ArrayList<String> users = new ArrayList<>();
-                users.add("4sVi0zisCr");
-                users.add("AMWRaP6MhM");
-                users.add("izGnOFiIGK");
-                PostManager.getInstance().createPost(caption, purpose, files, users, new SaveCallback() {
-                    @Override
-                    public void done(ParseException e) {
-                        startActivity(new Intent(PostPhotoActivity.this, HomeActivity.class));
-                        finish();
-                    }
-                });
+                PostManager.getInstance().getAllUsers(PostPhotoActivity.this);
 
+            }
+        });
+    }
+
+    @Override
+    public void usersAreReady(final List<ParseUser> objects) {
+        final String[] userNames = new String[objects.size()];
+        for (int i = 0; i < userNames.length; i++) {
+            userNames[i] = objects.get(i).getUsername();
+        }
+        final ArrayList<String> permittedUsers = new ArrayList<>();
+        AlertDialog.Builder builder = new AlertDialog.Builder(PostPhotoActivity.this);
+        builder.setTitle("Choose to Share with Users");
+
+        final boolean[] checkedItems = new boolean[userNames.length] //this will checked the items when user open the dialog
+        builder.setMultiChoiceItems(userNames, checkedItems, new DialogInterface.OnMultiChoiceClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+                checkedItems[which] = isChecked;
+            }
+        });
+
+        builder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                for (int i = 0; i < userNames.length; i++) {
+                    if (checkedItems[i]) {
+                        permittedUsers.add(objects.get(i).getObjectId());
+                    }
+                }
+                createPost(permittedUsers);
+                dialog.dismiss();
+            }
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    private void createPost(ArrayList<String> permittedUsers) {
+        String caption = rv_caption.getText().toString();
+        String purpose = rv_purpose.getText().toString();
+
+        PostManager.getInstance().createPost(caption, purpose, files, permittedUsers, new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                startActivity(new Intent(PostPhotoActivity.this, HomeActivity.class));
+                finish();
             }
         });
     }
