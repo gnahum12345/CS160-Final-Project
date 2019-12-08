@@ -38,7 +38,6 @@ public class SignUpActivity extends AppCompatActivity {
         ivProfileImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO: pick profile img.
                 pickImageFromGallery();
             }
         });
@@ -104,7 +103,6 @@ public class SignUpActivity extends AppCompatActivity {
 
     private void pickImageFromGallery() {
         //intent to pick image
-
         Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         intent.setType("image/*");
         startActivityForResult(intent, IMAGE_PICK_CODE);
@@ -117,7 +115,6 @@ public class SignUpActivity extends AppCompatActivity {
             //set image to image view
             //selectedImageView = findViewById(R.id.image_view);
             //selectedImageView.setImageURI(data.getData());
-
 
             Uri selectedImage = data.getData();
 

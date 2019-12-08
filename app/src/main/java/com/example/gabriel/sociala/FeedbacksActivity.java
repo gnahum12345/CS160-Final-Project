@@ -74,8 +74,6 @@ public class FeedbacksActivity extends AppCompatActivity implements View.OnClick
 
     private class MyRecyclerAdapter extends RecyclerView.Adapter<GridHolder>{
 
-        Bitmap[] bitmaps;
-
         List<Feedback> feedbacks;
 
 
@@ -128,7 +126,6 @@ public class FeedbacksActivity extends AppCompatActivity implements View.OnClick
     }
 
     protected void createFeedbackGrids(RecyclerView v) {
-        Bitmap[] bitmaps;
         myPosts = new ArrayList<>();
         myRecyclerAdapter = new MyRecyclerAdapter(myPosts);
 

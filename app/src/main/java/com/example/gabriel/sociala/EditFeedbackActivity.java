@@ -127,7 +127,6 @@ public class EditFeedbackActivity extends AppCompatActivity {
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                finish();
                 File[] externalStorageVolumes =
                         ContextCompat.getExternalFilesDirs(getApplicationContext(), null);
                 File primaryExternalStorage = externalStorageVolumes[0];

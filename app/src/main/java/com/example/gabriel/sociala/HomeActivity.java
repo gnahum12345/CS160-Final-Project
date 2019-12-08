@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -103,7 +102,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
 
     private void createHomeGrids(RecyclerView v) {
-        Bitmap[] bitmaps;
         myPosts = new ArrayList<>();
         myRecyclerAdapter = new MyRecyclerAdapter(myPosts);
 
@@ -115,36 +113,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         v.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
         v.setAdapter(myRecyclerAdapter);
     }
-
-//    private Bitmap[] getFriendsBitmaps() {
-//       Bitmap[] tempBitmaps = new Bitmap[9];
-//       tempBitmaps[0] = BitmapFactory.decodeResource(getResources(), R.drawable.image_sample);
-//       tempBitmaps[1] = BitmapFactory.decodeResource(getResources(), R.drawable.image_sample1);
-//       tempBitmaps[2] = BitmapFactory.decodeResource(getResources(), R.drawable.image_sample2);
-//       tempBitmaps[3] = BitmapFactory.decodeResource(getResources(), R.drawable.image_sample3);
-//       tempBitmaps[4] = BitmapFactory.decodeResource(getResources(), R.drawable.image_sample4);
-//       tempBitmaps[5] = BitmapFactory.decodeResource(getResources(), R.drawable.image_sample5);
-//       tempBitmaps[6] = BitmapFactory.decodeResource(getResources(), R.drawable.image_sample6);
-//       tempBitmaps[7] = BitmapFactory.decodeResource(getResources(), R.drawable.image_sample7);
-//       tempBitmaps[8] = BitmapFactory.decodeResource(getResources(), R.drawable.mushroom);
-//
-//       return tempBitmaps;
-//    }
-//
-//    private Bitmap[] getExploreBitmaps() {
-//        Bitmap[] tempBitmaps = new Bitmap[9];
-//        tempBitmaps[8] = BitmapFactory.decodeResource(getResources(), R.drawable.image_sample);
-//        tempBitmaps[7] = BitmapFactory.decodeResource(getResources(), R.drawable.image_sample1);
-//        tempBitmaps[6] = BitmapFactory.decodeResource(getResources(), R.drawable.image_sample2);
-//        tempBitmaps[5] = BitmapFactory.decodeResource(getResources(), R.drawable.image_sample3);
-//        tempBitmaps[4] = BitmapFactory.decodeResource(getResources(), R.drawable.image_sample4);
-//        tempBitmaps[3] = BitmapFactory.decodeResource(getResources(), R.drawable.image_sample5);
-//        tempBitmaps[2] = BitmapFactory.decodeResource(getResources(), R.drawable.image_sample6);
-//        tempBitmaps[1] = BitmapFactory.decodeResource(getResources(), R.drawable.image_sample7);
-//        tempBitmaps[0] = BitmapFactory.decodeResource(getResources(), R.drawable.mushroom);
-//
-//        return tempBitmaps;
-//    }
 
     @Override
     public void onClick(View view) {
@@ -206,13 +174,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     private class MyRecyclerAdapter extends RecyclerView.Adapter<GridHolder>{
 
-        Bitmap[] bitmaps;
-
         List<Post> posts;
-
-        public MyRecyclerAdapter(Bitmap[] bitmaps) {
-            this.bitmaps = bitmaps;
-        }
 
         private MyRecyclerAdapter(ArrayList<Post> posts) {
             this.posts = posts;
@@ -227,12 +189,10 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
         @Override
         public void onBindViewHolder(@NonNull final GridHolder gridHolder, int i) {
-//            gridHolder.imageView.setImageBitmap(bitmaps[i]);
             final Post p = posts.get(i);
             gridHolder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-//                    Toast.makeText(getApplicationContext(), p.getPhoto().getUrl(), Toast.LENGTH_SHORT).show();
                     ClipboardManager clipboardManager = (ClipboardManager)getSystemService(CLIPBOARD_SERVICE);
                     ClipData myClip = ClipData.newPlainText("text", p.getPhoto().getUrl());
                     clipboardManager.setPrimaryClip(myClip);
@@ -244,7 +204,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
             PostManager.DownloadImageTask dimv = new PostManager.DownloadImageTask(gridHolder.imageView, 300, null);
             dimv.execute(p.getPhoto().getUrl());
-//            Toast.makeText(getApplicationContext(), p.getPhoto().getUrl(), Toast.LENGTH_SHORT).show();
             String username = "";
             try {
                 ParseUser creator = p.getCreator();
@@ -298,7 +257,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     private void pickImageFromGallery() {
         //intent to pick image
-
         Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         intent.setType("image/*");
         startActivityForResult(intent, IMAGE_PICK_CODE);

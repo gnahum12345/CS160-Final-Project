@@ -138,9 +138,6 @@ public class PostFeedbackActivity extends AppCompatActivity {
             Toast.makeText(this, "Something went wrong.", Toast.LENGTH_LONG).show();
         }
 
-
-
-
     }
 
     private void makeFeedbackScreen(String id) {
