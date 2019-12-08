@@ -3,6 +3,8 @@ package com.example.gabriel.sociala;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -95,6 +97,10 @@ public class PostFeedbackActivity extends AppCompatActivity {
                 public void done(List<Post> objects, ParseException e) {
                     if (e == null) {
                         post = objects.get(0);
+                        if (postImageView == null) {
+                            postImageView = findViewById(R.id.image_view_photo);
+                            new PostManager.DownloadImageTask(postImageView, 300, null).execute(post.getPhoto().getUrl());
+                        }
                         try {
                             ParseUser parseUser = post.getCreator().fetchIfNeeded();
                             userName.setText(parseUser.getUsername());
@@ -120,9 +126,14 @@ public class PostFeedbackActivity extends AppCompatActivity {
 
         if (filePath != null && !filePath.isEmpty())  {
             File f = new File(filePath);
+            if (!f.exists()) {
+                postImageView = null;
+            }
             imgFile = f.listFiles()[0];
             Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
             postImageView.setImageBitmap(myBitmap);
+            Drawable drawable = new BitmapDrawable(getResources(), myBitmap);
+            addVideoButton.setBackground(drawable);
         } else {
             Toast.makeText(this, "Something went wrong.", Toast.LENGTH_LONG).show();
         }
@@ -135,6 +146,7 @@ public class PostFeedbackActivity extends AppCompatActivity {
     private void makeFeedbackScreen(String id) {
         Feedback.Query query = new Feedback.Query();
         query = query.specificFeedback(id);
+        // tool bar should be Feedback Details.
         query.findInBackground(new FindCallback<Feedback>() {
             @Override
             public void done(List<Feedback> objects, ParseException e) {

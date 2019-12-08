@@ -114,7 +114,9 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                     ClipboardManager clipboardManager = (ClipboardManager)getSystemService(CLIPBOARD_SERVICE);
                     ClipData myClip = ClipData.newPlainText("text", p.getPhoto().getUrl());
                     clipboardManager.setPrimaryClip(myClip);
-
+                    Intent i = new Intent(ProfileActivity.this, PostDetailActivity.class);
+                    i.putExtra("postID", p.getID());
+                    startActivity(i);
                 }
             });
 
