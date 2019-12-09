@@ -1,6 +1,5 @@
 package com.example.gabriel.sociala.models;
 
-import com.example.gabriel.sociala.exceptions.FeedbackException;
 import com.parse.ParseClassName;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
@@ -102,12 +101,10 @@ public class Feedback extends ParseObject {
 
     /**
      * When editing a post. This should be called once all the user reviewed the post.
-     * @throws FeedbackException when missing piece of information.
      */
-    public void postFeedback() throws FeedbackException {
+    public void postFeedback()  {
         String missingData = this.checkData();
         if (!missingData.isEmpty()) {
-            throw new FeedbackException(missingData);
         }
         //  upload to db.
         saveInBackground();

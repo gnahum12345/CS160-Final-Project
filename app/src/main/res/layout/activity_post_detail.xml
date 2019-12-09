@@ -38,6 +38,18 @@
             android:textSize="25sp"
             android:textStyle="bold" />
 
+        <TextView
+            android:id="@+id/schedulePostBtn"
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:textColor="@color/colorPrimary"
+            android:textSize="15sp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="7dp"
+            android:layout_marginEnd="0dp"
+            android:text="Schedule Post" />
+
     </RelativeLayout>
     <View
         android:layout_width="match_parent"
@@ -88,7 +100,7 @@
             android:layout_width="match_parent"
             android:layout_height="280dp"
             android:background="@android:color/darker_gray"
-            android:scaleType="centerCrop" />
+            />
 
         <TextView
             android:id="@+id/post_caption"
@@ -115,6 +127,7 @@
 
     <Button
         android:id="@+id/view_feedback_btn"
+        style="?android:attr/borderlessButtonStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
@@ -126,6 +139,7 @@
 
     <Button
         android:id="@+id/provide_feedback_btn"
+        style="?android:attr/borderlessButtonStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@+id/view_feedback_btn"
