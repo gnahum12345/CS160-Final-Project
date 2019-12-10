@@ -5,6 +5,7 @@ package com.example.gabriel.sociala;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -33,7 +34,10 @@ public class PostDetailActivity extends AppCompatActivity implements View.OnClic
     private TextView tvUserName;
     private TextView tvCaption;
     private TextView tvReason;
+    private TextView tvSchedulePost;
+
     private Post post;
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -48,6 +52,7 @@ public class PostDetailActivity extends AppCompatActivity implements View.OnClic
         tvCaption = findViewById(R.id.post_caption);
         tvReason = findViewById(R.id.post_requirement);
         tvUserName = findViewById(R.id.username);
+        tvSchedulePost = findViewById(R.id.schedulePostBtn);
 
         Intent i = getIntent();
         final String objectID = i.getStringExtra("postID");
@@ -81,6 +86,11 @@ public class PostDetailActivity extends AppCompatActivity implements View.OnClic
 
                     try {
                         creator = creator.fetchIfNeeded();
+                        if (creator == ParseUser.getCurrentUser()) {
+                            tvSchedulePost.setVisibility(View.VISIBLE);
+                        } else {
+                            tvSchedulePost.setVisibility(View.GONE);
+                        }
                         tvUserName.setText(creator.getUsername());
                         ParseFile pf = creator.getParseFile("profilePic");
                         if (pf != null) {
@@ -94,6 +104,12 @@ public class PostDetailActivity extends AppCompatActivity implements View.OnClic
                     e.printStackTrace();
                     Log.e(TAG, "done: ", e);
                 }
+            }
+        });
+        tvSchedulePost.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Snackbar.make(v, "Unfortunately this feature wasn't fully built yet. ", Snackbar.LENGTH_LONG).show();
             }
         });
         back.setOnClickListener(new View.OnClickListener() {

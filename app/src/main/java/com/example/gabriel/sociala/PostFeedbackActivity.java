@@ -36,7 +36,10 @@ public class PostFeedbackActivity extends AppCompatActivity {
     EditText caption, reason;
     Button addVideoButton, postFeedbackButton;
     File imgFile = null;
+    File videoFile = null;
     Post post;
+    String videoFilePath;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,6 +88,8 @@ public class PostFeedbackActivity extends AppCompatActivity {
         String filePath = i.getStringExtra("filePath");
         String captionString = i.getStringExtra("caption");
         String reasonString = i.getStringExtra("reason");
+        videoFilePath = i.getStringExtra("videoFilePath");
+
         final String postID = i.getStringExtra("postID");
         if (postID == null || postID.isEmpty()) {
             Toast.makeText(this, "Oh oh, we lost the reference to which post we were looking at. ", Toast.LENGTH_LONG).show();
@@ -123,11 +128,12 @@ public class PostFeedbackActivity extends AppCompatActivity {
             caption.setText(captionString);
         }
         reason.setText(reasonString);
-
+        videoFile = getVideoFile();
         if (filePath != null && !filePath.isEmpty())  {
             File f = new File(filePath);
             if (!f.exists()) {
                 postImageView = null;
+                return ;
             }
             imgFile = f.listFiles()[0];
             Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
@@ -140,6 +146,13 @@ public class PostFeedbackActivity extends AppCompatActivity {
 
     }
 
+    public File getVideoFile() {
+        File f = new File(videoFilePath);
+        if (f.exists()) {
+            return f;
+        }
+        return null;
+    }
     private void makeFeedbackScreen(String id) {
         Feedback.Query query = new Feedback.Query();
         query = query.specificFeedback(id);
@@ -206,6 +219,7 @@ public class PostFeedbackActivity extends AppCompatActivity {
         // TODO: add to database and navigate to the post.
         if (imgFile != null) {
             final ParseFile pf = new ParseFile(imgFile);
+
             Photo p = new Photo();
             p.setName(post.getID());
             p.setPhoto(pf);
@@ -218,7 +232,13 @@ public class PostFeedbackActivity extends AppCompatActivity {
                     feedback.setEditedPhoto(pf);
                     feedback.setReviewer(ParseUser.getCurrentUser());
                     feedback.setPost(post);
-//                    feedback.setVideoPath(null);
+                    if (videoFile != null) {
+                        final ParseFile pfVideo = new ParseFile(videoFile);
+                        feedback.setVideoPath(pfVideo);
+                    } else {
+                        feedback.setVideoPath(null);
+                    }
+
                     feedback.saveInBackground(new SaveCallback() {
                         @Override
                         public void done(ParseException e) {
@@ -251,9 +271,16 @@ public class PostFeedbackActivity extends AppCompatActivity {
                 Toast.makeText(this, "Didn't delete directory " + parentDir.toString(), Toast.LENGTH_SHORT).show();
             }
         }
+        if (videoFile != null) {
+            videoFile.delete();
+        }
     }
+
     public void addVideo() {
         // TODO: add the video to database and display it on post page.
+        Intent i = new Intent(PostFeedbackActivity.this, PlayVideoActivity.class);
+        i.putExtra("file", videoFilePath);
+        startActivity(i);
 
     }
 }

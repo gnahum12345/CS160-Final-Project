@@ -1,6 +1,6 @@
 package com.example.gabriel.sociala.models;
 
-import com.example.gabriel.sociala.exceptions.PostException;
+
 import com.parse.ParseACL;
 import com.parse.ParseClassName;
 import com.parse.ParseFile;
@@ -119,10 +119,9 @@ public class Post extends ParseObject {
      * and make user's postCount++;
      * and false otherwise.
      * */
-    public void uploadToDB() throws PostException {
+    public void uploadToDB() {
         String missingData = this.checkData();
         if (!missingData.isEmpty()) {
-            throw new PostException(missingData);
         }
 
         //upload to DB;

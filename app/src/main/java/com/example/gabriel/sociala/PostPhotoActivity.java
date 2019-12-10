@@ -14,7 +14,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.gabriel.sociala.models.Post;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseUser;
@@ -39,6 +38,7 @@ public class PostPhotoActivity extends AppCompatActivity  implements PostManager
     EditText rv_caption;
     EditText rv_purpose;
     final ArrayList<File> files = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,7 +52,7 @@ public class PostPhotoActivity extends AppCompatActivity  implements PostManager
         try {
             ParseFile pf = ParseUser.getCurrentUser().getParseFile("profilePic");
             if (pf != null) {
-                new PostManager.DownloadImageTask(profilePic, 300, null)
+                new PostManager.DownloadImageTask(profilePic, null,280)
                         .execute(pf.getUrl());
             }
         } catch (IllegalStateException e) {
@@ -92,6 +92,7 @@ public class PostPhotoActivity extends AppCompatActivity  implements PostManager
                     Snackbar.make(view, "Please fill out the purpose of posting", Snackbar.LENGTH_INDEFINITE).setAction("Ok", new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
+                            files.clear();
                             finish();
                         }
                     }).show();
@@ -104,6 +105,9 @@ public class PostPhotoActivity extends AppCompatActivity  implements PostManager
 
     @Override
     public void usersAreReady(final List<ParseUser> objects) {
+        if (files.size() == 0) {
+            return;
+        }
         final String[] userNames = new String[objects.size()];
         for (int i = 0; i < userNames.length; i++) {
             userNames[i] = objects.get(i).getUsername();
@@ -112,7 +116,7 @@ public class PostPhotoActivity extends AppCompatActivity  implements PostManager
         AlertDialog.Builder builder = new AlertDialog.Builder(PostPhotoActivity.this);
         builder.setTitle("Choose to Share with Users");
 
-        final boolean[] checkedItems = new boolean[userNames.length] //this will checked the items when user open the dialog
+        final boolean[] checkedItems = new boolean[userNames.length]; //this will checked the items when user open the dialog
         builder.setMultiChoiceItems(userNames, checkedItems, new DialogInterface.OnMultiChoiceClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which, boolean isChecked) {
