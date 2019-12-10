@@ -1,14 +1,15 @@
 package com.example.gabriel.sociala;
 
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.media.projection.MediaProjectionManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -27,12 +28,12 @@ import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseUser;
 
-import java.io.File;
 import java.util.List;
 
 public class EditFeedbackActivity extends AppCompatActivity {
 
-    private static final int SUCCESS_CODE = 200;
+    private static final int PHOTO_SUCCESS_CODE = 200;
+    private static final int RECORDING_PERMISSION_CODE = 1;
     private final String TAG = "EditFeedbackActivity";
     ImageView postImageView;
     Button backButton, nextButton;
@@ -41,11 +42,16 @@ public class EditFeedbackActivity extends AppCompatActivity {
     TextView userName;
     EditText caption, reason;
     private String filePath;
+    private MediaProjectionManager mProjectionManager;
     private static final String OUTPUT_PHOTO_DIRECTORY = "SocialA";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_feedback);
+
+        mProjectionManager = (MediaProjectionManager) getSystemService (Context.MEDIA_PROJECTION_SERVICE);
+        boolean isRecording = isServiceRunning(RecordService.class);
 
         postImageView = findViewById(R.id.image_view_photo);
         backButton = findViewById(R.id.back_button);
@@ -127,11 +133,8 @@ public class EditFeedbackActivity extends AppCompatActivity {
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                File[] externalStorageVolumes =
-                        ContextCompat.getExternalFilesDirs(getApplicationContext(), null);
-                File primaryExternalStorage = externalStorageVolumes[0];
 
-                filePath = Environment.getExternalStorageDirectory()+"/" + OUTPUT_PHOTO_DIRECTORY;
+                filePath = Environment.getExternalStorageDirectory()+ "/" + OUTPUT_PHOTO_DIRECTORY;
 
                 // go to postFeedbackActivity with filePath.
                 Intent i = new Intent(EditFeedbackActivity.this, PostFeedbackActivity.class);
@@ -157,16 +160,7 @@ public class EditFeedbackActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // TODO: add image processing api.
-                Intent dsPhotoEditorIntent = new Intent(EditFeedbackActivity.this, DsPhotoEditorActivity.class);
-                BitmapDrawable bd = ((BitmapDrawable) postImageView.getDrawable());
-                Bitmap b = bd.getBitmap();
-                Uri data = BitmapScalar.getUriFromBitmap(context, b);
-                dsPhotoEditorIntent.setData(data);
-                dsPhotoEditorIntent.putExtra(DsPhotoEditorConstants.DS_PHOTO_EDITOR_OUTPUT_DIRECTORY, OUTPUT_PHOTO_DIRECTORY);
-                int[] toolsToHide = {DsPhotoEditorActivity.TOOL_PIXELATE, DsPhotoEditorActivity.TOOL_ORIENTATION};
-                dsPhotoEditorIntent.putExtra(DsPhotoEditorConstants.DS_PHOTO_EDITOR_TOOLS_TO_HIDE, toolsToHide);
-
-                startActivityForResult(dsPhotoEditorIntent, SUCCESS_CODE);
+                startActivityForResult(mProjectionManager.createScreenCaptureIntent(), RECORDING_PERMISSION_CODE);
             }
         });
     }
@@ -175,16 +169,56 @@ public class EditFeedbackActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == RESULT_OK) {
-            if (requestCode == SUCCESS_CODE) {
+        switch (requestCode) {
+            case PHOTO_SUCCESS_CODE:
+                if (resultCode == RESULT_OK) {
                     if (data == null) {
                         Log.d("EditFeedbackActivity", "onActivityResult: data is null.... ");
                     }
                     Uri outputUri = data.getData();
                     postImageView.setImageURI(outputUri);
                     Toast.makeText(this, "New image displayed", Toast.LENGTH_SHORT).show();
+                }
+                stopRecordingService();
+
+                break;
+            case RECORDING_PERMISSION_CODE:
+                if (resultCode == RESULT_OK) {
+                    startRecordingService(resultCode, data);
+                    Intent dsPhotoEditorIntent = new Intent(EditFeedbackActivity.this, DsPhotoEditorActivity.class);
+                    BitmapDrawable bd = ((BitmapDrawable) postImageView.getDrawable());
+                    Bitmap b = bd.getBitmap();
+                    Uri uriData = BitmapScalar.getUriFromBitmap(this, b);
+                    dsPhotoEditorIntent.setData(uriData);
+                    dsPhotoEditorIntent.putExtra(DsPhotoEditorConstants.DS_PHOTO_EDITOR_OUTPUT_DIRECTORY, OUTPUT_PHOTO_DIRECTORY);
+                    int[] toolsToHide = {DsPhotoEditorActivity.TOOL_PIXELATE, DsPhotoEditorActivity.TOOL_ORIENTATION};
+                    dsPhotoEditorIntent.putExtra(DsPhotoEditorConstants.DS_PHOTO_EDITOR_TOOLS_TO_HIDE, toolsToHide);
+                    startActivityForResult(dsPhotoEditorIntent, PHOTO_SUCCESS_CODE);
+
+                } else {
+                    Toast.makeText(this, "Can't record screen", Toast.LENGTH_SHORT).show();
+                }
+                break;
+        }
+    }
+
+    private void startRecordingService(int resultCode, Intent data) {
+        Intent i = RecordService.newIntent(this, resultCode, data);
+        startService(i);
+    }
+
+    private void stopRecordingService() {
+        Intent i = new Intent(this, RecordService.class);
+        stopService(i);
+    }
+
+    private boolean isServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
             }
         }
-
+        return false;
     }
 }
