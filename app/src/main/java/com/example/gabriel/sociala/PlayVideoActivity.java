@@ -15,13 +15,11 @@ public class PlayVideoActivity extends AppCompatActivity {
         Intent i = getIntent();
 
         String fileURL = i.getStringExtra("file");
-        String filePath = i.getStringExtra("filePath");
 
         Uri uri=Uri.parse(fileURL);
 
         VideoView video= findViewById(R.id.videoView);
         video.setVideoURI(uri);
         video.start();
-
     }
 }
