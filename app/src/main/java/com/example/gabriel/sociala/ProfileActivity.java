@@ -6,7 +6,6 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -85,13 +84,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
     private class MyRecyclerAdapter extends RecyclerView.Adapter<ProfileActivity.GridHolder>{
 
-        Bitmap[] bitmaps;
-
         List<Post> posts;
-
-        public MyRecyclerAdapter(Bitmap[] bitmaps) {
-            this.bitmaps = bitmaps;
-        }
 
         public MyRecyclerAdapter(ArrayList<Post> posts) {
             this.posts = posts;
@@ -110,7 +103,6 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             gridHolder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-//                    Toast.makeText(getApplicationContext(), p.getPhoto().getUrl(), Toast.LENGTH_SHORT).show();
                     ClipboardManager clipboardManager = (ClipboardManager)getSystemService(CLIPBOARD_SERVICE);
                     ClipData myClip = ClipData.newPlainText("text", p.getPhoto().getUrl());
                     clipboardManager.setPrimaryClip(myClip);
@@ -122,7 +114,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
             PostManager.DownloadImageTask dimv = new PostManager.DownloadImageTask(gridHolder.imageView, 300, null);
             dimv.execute(p.getPhoto().getUrl());
-//            Toast.makeText(getApplicationContext(), p.getPhoto().getUrl(), Toast.LENGTH_SHORT).show();
+
             gridHolder.textView.setText(p.getCreator().getUsername() + ": " + p.getCaption());
         }
 

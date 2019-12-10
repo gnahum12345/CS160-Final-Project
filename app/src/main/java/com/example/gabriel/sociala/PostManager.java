@@ -39,15 +39,18 @@ public class PostManager {
     private PostManager() {
     }
 
-    public void getAllUsers(final RecyclerView.Adapter adapter, final List<ParseUser> obj) {
+
+    public interface PostManagerListener {
+        void usersAreReady(List<ParseUser> objects);
+    }
+
+    public void getAllUsers(final PostManagerListener listener) {
         ParseQuery<ParseUser> query = ParseQuery.getQuery("_User");
         query.findInBackground(new FindCallback<ParseUser>() {
             @Override
             public void done(List<ParseUser> objects, ParseException e) {
                 if (e == null) {
-                    obj.clear();
-                    obj.addAll(objects);
-                    adapter.notifyDataSetChanged();
+                   listener.usersAreReady(objects);
                 } else {
                     e.printStackTrace();
                     Log.e(TAG, "GET FEEDBACKS with USER: ", e);
