@@ -2,7 +2,6 @@ package com.example.gabriel.sociala;
 
 import android.Manifest;
 import android.app.ActivityManager;
-import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -48,10 +47,9 @@ public class EditFeedbackActivity extends AppCompatActivity {
     ImageView profilePic;
     TextView userName;
     EditText caption, reason;
-    NotificationManager.Policy notificationInterrupt = null;
-
     private String imgFilePath;
     private View rootView;
+    private String filePath;
     private MediaProjectionManager mProjectionManager;
     private static final String OUTPUT_PHOTO_DIRECTORY = "SocialA";
 
@@ -62,6 +60,8 @@ public class EditFeedbackActivity extends AppCompatActivity {
 
         mProjectionManager = (MediaProjectionManager) getSystemService(Context.MEDIA_PROJECTION_SERVICE);
         rootView = findViewById(R.id.rootView);
+
+
         postImageView = findViewById(R.id.image_view_photo);
         backButton = findViewById(R.id.back_button);
         nextButton = findViewById(R.id.next_button);
@@ -148,6 +148,9 @@ public class EditFeedbackActivity extends AppCompatActivity {
                 }
                 imgFilePath = Environment.getExternalStorageDirectory()+ "/" + OUTPUT_PHOTO_DIRECTORY;
                 String videoFilePath = Environment.getExternalStoragePublicDirectory(DIRECTORY_MOVIES).getAbsolutePath()  + "/social_a.mp4";
+
+                filePath = Environment.getExternalStorageDirectory()+ "/" + OUTPUT_PHOTO_DIRECTORY;
+
                 // go to postFeedbackActivity with filePath.
                 Intent i = new Intent(EditFeedbackActivity.this, PostFeedbackActivity.class);
                 String cap = caption.getText().toString();
@@ -228,10 +231,6 @@ public class EditFeedbackActivity extends AppCompatActivity {
                     });
                     builder.show();
 
-
-
-
-
                 } else {
                     Toast.makeText(this, "Can't record screen", Toast.LENGTH_SHORT).show();
                 }
@@ -244,6 +243,7 @@ public class EditFeedbackActivity extends AppCompatActivity {
         Intent i = RecordService.newIntent(this, resultCode, data);
         startService(i);
     }
+
 
     private void stopRecordingService() {
         Intent i = new Intent(this, RecordService.class);

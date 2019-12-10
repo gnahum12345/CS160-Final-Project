@@ -1,4 +1,5 @@
 package com.example.gabriel.sociala;
+
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -98,7 +99,6 @@ public final class RecordService extends Service {
     public void onCreate() {
         // run this service as foreground service to prevent it from getting killed
         // when the main app is being closed
-
 
         // register receiver to check if the phone screen is on or off
         mScreenStateReceiver = new MyBroadcastReceiver();
